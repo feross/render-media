@@ -1,5 +1,5 @@
-exports.renderTo = renderTo
-exports.appendTo = appendTo
+exports.render = render
+exports.append = append
 var mime = exports.mime = require('./lib/mime')
 
 var debug = require('debug')('render-media')
@@ -20,11 +20,11 @@ var IFRAME_EXTS = [ '.css', '.html', '.js', '.md', '.pdf', '.txt' ]
 
 var MediaSource = typeof window !== 'undefined' && window.MediaSource
 
-function renderTo (file, elem, cb) {
+function render (file, elem, cb) {
   validateFile(file)
   if (typeof elem === 'string') elem = document.querySelector(elem)
 
-  render(file, function (tagName) {
+  renderMedia(file, function (tagName) {
     if (elem.nodeName !== tagName.toUpperCase()) {
       var extname = path.extname(file.name).toLowerCase()
 
@@ -38,7 +38,7 @@ function renderTo (file, elem, cb) {
   }, cb)
 }
 
-function appendTo (file, rootElem, cb) {
+function append (file, rootElem, cb) {
   validateFile(file)
   if (typeof rootElem === 'string') rootElem = document.querySelector(rootElem)
 
@@ -49,7 +49,7 @@ function appendTo (file, rootElem, cb) {
     )
   }
 
-  render(file, function (tagName) {
+  renderMedia(file, function (tagName) {
     if (tagName === 'video' || tagName === 'audio') return createMedia(tagName)
     else return createElem(tagName)
   }, function (err, elem) {
@@ -73,7 +73,7 @@ function appendTo (file, rootElem, cb) {
   }
 }
 
-function render (file, getElem, cb) {
+function renderMedia (file, getElem, cb) {
   var elem
   var extname = path.extname(file.name).toLowerCase()
   var currentTime = 0

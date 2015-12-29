@@ -41,7 +41,7 @@ var file = {
   }
 }
 
-render.appendTo(file, 'body', function (err, elem) {
+render.append(file, 'body', function (err, elem) {
   if (err) return console.error(err.message)
 
   console.log(elem) // this is the newly created element with the media in it
@@ -50,7 +50,7 @@ render.appendTo(file, 'body', function (err, elem) {
 
 ### api
 
-#### `render.appendTo(file, rootElem, [function callback (err, elem) {}])`
+#### `render.append(file, rootElem, [function callback (err, elem) {}])`
 
 `file` is an object with a `name` (string, with file extension), `length` (number,
 size of file in bytes), and `createReadStream` method which provides the file data.
@@ -78,9 +78,9 @@ appended to `rootElem`.
 `callback` will be called once the file is visible to the user. `callback` is called
 with an `Error` (or `null`) and the new DOM node that is displaying the content.
 
-#### `render.renderTo(file, elem, [function callback (err, elem) {}])`
+#### `render.render(file, elem, [function callback (err, elem) {}])`
 
-Like `render.appendTo` but renders directly into given element (or CSS selector).
+Like `render.append` but renders directly into given element (or CSS selector).
 
 
 ### why does video/audio streaming not work on file X?

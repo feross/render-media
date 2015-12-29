@@ -24,30 +24,30 @@ function verifyImage (t, err, elem) {
   elem.remove()
 }
 
-test('image appendTo w/ query selector', function (t) {
-  renderMedia.appendTo(file, 'body', function (err, elem) {
+test('image append w/ query selector', function (t) {
+  renderMedia.append(file, 'body', function (err, elem) {
     verifyImage(t, err, elem)
   })
 })
 
-test('image appendTo w/ element', function (t) {
-  renderMedia.appendTo(file, document.body, function (err, elem) {
+test('image append w/ element', function (t) {
+  renderMedia.append(file, document.body, function (err, elem) {
     verifyImage(t, err, elem)
   })
 })
 
-test('image renderTo w/ query selector', function (t) {
+test('image render w/ query selector', function (t) {
   var img = document.createElement('img')
   document.body.appendChild(img)
-  renderMedia.renderTo(file, img, function (err, elem) {
+  renderMedia.render(file, img, function (err, elem) {
     verifyImage(t, err, elem)
   })
 })
 
-test('image renderTo w/ element', function (t) {
+test('image render w/ element', function (t) {
   var img = document.createElement('img')
   document.body.appendChild(img)
-  renderMedia.renderTo(file, img, function (err, elem) {
+  renderMedia.render(file, img, function (err, elem) {
     verifyImage(t, err, elem)
   })
 })
