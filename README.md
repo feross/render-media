@@ -78,7 +78,7 @@ appended to `rootElem`.
 `callback` will be called once the file is visible to the user. `callback` is called
 with an `Error` (or `null`) and the new DOM node that is displaying the content.
 
-#### `render.renderTo(file, elem, function callback (err, elem) {})`
+#### `render.renderTo(file, elem, [function callback (err, elem) {}])`
 
 Like `render.appendTo` but renders directly into given element (or CSS selector).
 
