@@ -39,6 +39,7 @@ function render (file, elem, cb) {
 }
 
 function append (file, rootElem, cb) {
+  if (!cb) cb = function () {}
   validateFile(file)
   if (typeof rootElem === 'string') rootElem = document.querySelector(rootElem)
 
@@ -74,9 +75,10 @@ function append (file, rootElem, cb) {
 }
 
 function renderMedia (file, getElem, cb) {
-  var elem
+  if (!cb) cb = function () {}
   var extname = path.extname(file.name).toLowerCase()
   var currentTime = 0
+  var elem
 
   if (MEDIASOURCE_EXTS.indexOf(extname) >= 0) renderMediaSource()
   else if (AUDIO_EXTS.indexOf(extname) >= 0) renderAudio()
