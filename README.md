@@ -105,9 +105,9 @@ the respective repository.
 
 MIT. Copyright (c) [Feross Aboukhadijeh](http://feross.org).
 
-[travis-image]: https://img.shields.io/travis/feross/render-media/master.svg?style=flat
+[travis-image]: https://img.shields.io/travis/feross/render-media/master.svg
 [travis-url]: https://travis-ci.org/feross/render-media
-[npm-image]: https://img.shields.io/npm/v/render-media.svg?style=flat
+[npm-image]: https://img.shields.io/npm/v/render-media.svg
 [npm-url]: https://npmjs.org/package/render-media
-[downloads-image]: https://img.shields.io/npm/dm/render-media.svg?style=flat
+[downloads-image]: https://img.shields.io/npm/dm/render-media.svg
 [downloads-url]: https://npmjs.org/package/render-media
