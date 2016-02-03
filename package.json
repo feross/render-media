@@ -14,7 +14,7 @@
     "debug": "^2.2.0",
     "mediasource": "^1.0.0",
     "stream-to-blob-url": "^1.0.0",
-    "videostream": "^1.2.1"
+    "videostream": "^2.0.0"
   },
   "devDependencies": {
     "brfs": "^1.4.1",
