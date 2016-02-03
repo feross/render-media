@@ -1,6 +1,6 @@
 exports.render = render
 exports.append = append
-var mime = exports.mime = require('./lib/mime')
+var mime = exports.mime = require('./lib/mime.json')
 
 var debug = require('debug')('render-media')
 var MediaSourceStream = require('mediasource')
