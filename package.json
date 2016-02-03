@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "debug": "^2.2.0",
+    "is-ascii": "^1.0.0",
     "mediasource": "^2.1.0",
     "stream-to-blob-url": "^2.0.0",
     "videostream": "^2.0.0"

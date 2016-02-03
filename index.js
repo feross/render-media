@@ -3,6 +3,7 @@ exports.append = append
 var mime = exports.mime = require('./lib/mime.json')
 
 var debug = require('debug')('render-media')
+var isAscii = require('is-ascii')
 var MediaElementWrapper = require('mediasource')
 var path = require('path')
 var streamToBlobURL = require('stream-to-blob-url')
@@ -80,11 +81,17 @@ function renderMedia (file, getElem, cb) {
   var currentTime = 0
   var elem
 
-  if (MEDIASOURCE_EXTS.indexOf(extname) >= 0) renderMediaSource()
-  else if (AUDIO_EXTS.indexOf(extname) >= 0) renderAudio()
-  else if (IMAGE_EXTS.indexOf(extname) >= 0) renderImage()
-  else if (IFRAME_EXTS.indexOf(extname) >= 0) renderIframe()
-  else nextTick(cb, new Error('Unsupported file type "' + extname + '": Cannot append to DOM'))
+  if (MEDIASOURCE_EXTS.indexOf(extname) >= 0) {
+    renderMediaSource()
+  } else if (AUDIO_EXTS.indexOf(extname) >= 0) {
+    renderAudio()
+  } else if (IMAGE_EXTS.indexOf(extname) >= 0) {
+    renderImage()
+  } else if (IFRAME_EXTS.indexOf(extname) >= 0) {
+    renderIframe()
+  } else {
+    tryRenderIframe()
+  }
 
   function renderMediaSource () {
     if (!MediaSource) {
@@ -196,22 +203,45 @@ function renderMedia (file, getElem, cb) {
     })
   }
 
+  function tryRenderIframe () {
+    debug('Unknown file extension "%s" - will attempt to render into iframe', extname)
+
+    var str = ''
+    file.createReadStream({ start: 0, end: 1000 })
+      .setEncoding('utf8')
+      .on('data', function (chunk) {
+        str += chunk
+      })
+      .on('end', done)
+      .on('error', cb)
+
+    function done () {
+      if (isAscii(str)) {
+        debug('File extension "%s" appears ascii, so will render.', extname)
+        renderIframe()
+      } else {
+        debug('File extension "%s" appears non-ascii, will not render.', extname)
+        cb(new Error('Unsupported file type "' + extname + '": Cannot append to DOM'))
+      }
+    }
+  }
+
   function fatalError (err) {
     err.message = 'Error rendering file "' + file.name + '": ' + err.message
     debug(err.message)
-    if (cb) cb(err)
+    cb(err)
   }
 }
 
 function nextTick (cb, err, val) {
   process.nextTick(function () {
-    if (cb) cb(err, val)
+    cb(err, val)
   })
 }
 
 function getBlobURL (file, cb) {
-  var ext = path.extname(file.name).toLowerCase()
-  streamToBlobURL(file.createReadStream(), mime[ext], cb)
+  var extname = path.extname(file.name).toLowerCase()
+  streamToBlobURL(file.createReadStream(), mime[extname], cb)
 }
 
 function validateFile (file) {
@@ -227,12 +257,12 @@ function validateFile (file) {
 }
 
 function getCodec (name) {
-  var ext = path.extname(name).toLowerCase()
+  var extname = path.extname(name).toLowerCase()
   return {
     '.m4a': 'audio/mp4; codecs="mp4a.40.5"',
     '.m4v': 'video/mp4; codecs="avc1.640029, mp4a.40.5"',
     '.mp3': 'audio/mpeg',
     '.mp4': 'video/mp4; codecs="avc1.640029, mp4a.40.5"',
     '.webm': 'video/webm; codecs="vorbis, vp8"'
-  }[ext]
+  }[extname]
 }
