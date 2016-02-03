@@ -91,12 +91,10 @@ Many file types are supported (again, depending on browser support), but only `.
 `.m4v`, and `.m4a` have full support, including seeking.
 
 To support video/audio streaming of arbitrary files, WebTorrent uses the
-[`videostream`][videostream] package, which in turn uses [`mp4box.js`][mp4box.js].
-If you think there may be a bug in one of these packages, please file an issue on
-the respective repository.
+[`videostream`][videostream] package. If you think there may be a bug in video handling,
+please file an issue on the `videostream` repository.
 
 [videostream]: https://npmjs.com/package/videostream
-[mp4box.js]: https://github.com/gpac/mp4box.js
 
 
 ### license
