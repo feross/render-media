@@ -34,7 +34,6 @@ var img = new Buffer('some jpg image data')
 
 var file = {
   name: 'cat.jpg',
-  length: 10,
   createReadStream: function (opts) {
     if (!opts) opts = {}
     return from([ img.slice(opts.start || 0, opts.end || (img.length - 1)) ])
@@ -52,15 +51,14 @@ render.append(file, 'body', function (err, elem) {
 
 #### `render.append(file, rootElem, [function callback (err, elem) {}])`
 
-`file` is an object with a `name` (string, with file extension), `length` (number,
-size of file in bytes), and `createReadStream` method which provides the file data.
+`file` is an object with a `name` (string, with file extension) and `createReadStream`
+method which provides the file data.
 
 Here's an example file:
 
 ```js
 var file = {
   name: 'file.mp4'
-  length: 100000, // Total size of the file, in bytes
   createReadStream: function (opts) {
     var start = opts.start
     var end = opts.end

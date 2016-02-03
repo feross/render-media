@@ -208,7 +208,7 @@ function nextTick (cb, err, val) {
 
 function getBlobURL (file, cb) {
   var ext = path.extname(file.name).toLowerCase()
-  streamToBlobURL(file.createReadStream(), file.length, mime[ext], cb)
+  streamToBlobURL(file.createReadStream(), mime[ext], cb)
 }
 
 function validateFile (file) {
@@ -217,9 +217,6 @@ function validateFile (file) {
   }
   if (typeof file.name !== 'string') {
     throw new Error('missing or invalid file.name property')
-  }
-  if (typeof file.length !== 'number') {
-    throw new Error('missing or invalid file.length property')
   }
   if (typeof file.createReadStream !== 'function') {
     throw new Error('missing or invalid file.createReadStream property')

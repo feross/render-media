@@ -7,7 +7,6 @@ var img = fs.readFileSync(__dirname + '/cat.jpg')
 
 var file = {
   name: 'cat.jpg',
-  length: img.length,
   createReadStream: function (opts) {
     if (!opts) opts = {}
     return from([ img.slice(opts.start || 0, opts.end || (img.length - 1)) ])
