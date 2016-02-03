@@ -3,7 +3,7 @@ exports.append = append
 var mime = exports.mime = require('./lib/mime.json')
 
 var debug = require('debug')('render-media')
-var MediaSourceStream = require('mediasource')
+var MediaElementWrapper = require('mediasource')
 var path = require('path')
 var streamToBlobURL = require('stream-to-blob-url')
 var videostream = require('videostream')
@@ -114,7 +114,10 @@ function renderMedia (file, getElem, cb) {
       elem.addEventListener('error', fallbackToBlobURL)
       elem.addEventListener('playing', onPlaying)
 
-      file.createReadStream().pipe(new MediaSourceStream(elem, { extname: extname }))
+      var wrapper = new MediaElementWrapper(elem)
+      var writable = wrapper.createWriteStream(getCodec(file.name))
+      file.createReadStream().pipe(writable)
+
       if (currentTime) elem.currentTime = currentTime
     }
 
@@ -221,4 +224,15 @@ function validateFile (file) {
   if (typeof file.createReadStream !== 'function') {
     throw new Error('missing or invalid file.createReadStream property')
   }
+}
+
+function getCodec (name) {
+  var ext = path.extname(name).toLowerCase()
+  return {
+    '.m4a': 'audio/mp4; codecs="mp4a.40.5"',
+    '.m4v': 'video/mp4; codecs="avc1.640029, mp4a.40.5"',
+    '.mp3': 'audio/mpeg',
+    '.mp4': 'video/mp4; codecs="avc1.640029, mp4a.40.5"',
+    '.webm': 'video/webm; codecs="vorbis, vp8"'
+  }[ext]
 }
