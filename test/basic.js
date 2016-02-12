@@ -1,9 +1,10 @@
 var from = require('from2')
 var fs = require('fs')
+var path = require('path')
 var renderMedia = require('../')
 var test = require('tape')
 
-var img = fs.readFileSync(__dirname + '/cat.jpg')
+var img = fs.readFileSync(path.join(__dirname, 'cat.jpg'))
 
 var file = {
   name: 'cat.jpg',
