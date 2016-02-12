@@ -20,7 +20,7 @@
   "devDependencies": {
     "brfs": "^1.4.1",
     "from2": "^2.1.0",
-    "standard": "^5.0.0",
+    "standard": "^6.0.4",
     "string-to-stream": "^1.0.1",
     "tape": "^4.0.0",
     "zuul": "^3.0.0"
