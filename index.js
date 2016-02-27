@@ -94,15 +94,12 @@ function renderMedia (file, getElem, cb) {
   }
 
   function renderMediaSource () {
-    if (!MediaSource) {
-      return nextTick(cb, new Error(
-        'Video/audio streaming is not supported in your browser. You can still share ' +
-        'or download ' + file.name + ' (once it\'s fully downloaded). Use Chrome for ' +
-        'MediaSource support.'
-      ))
-    }
-
     var tagName = MEDIASOURCE_VIDEO_EXTS.indexOf(extname) >= 0 ? 'video' : 'audio'
+    
+    if (!MediaSource) {
+      // Replace error with useBlobURL for non-MediaSource support
+      useBlobURL()
+    }
 
     if (VIDEOSTREAM_EXTS.indexOf(extname) >= 0) useVideostream()
     else useMediaSource()
