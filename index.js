@@ -94,18 +94,17 @@ function renderMedia (file, getElem, cb) {
   }
 
   function renderMediaSource () {
-    if (!MediaSource) {
-      return nextTick(cb, new Error(
-        'Video/audio streaming is not supported in your browser. You can still share ' +
-        'or download ' + file.name + ' (once it\'s fully downloaded). Use Chrome for ' +
-        'MediaSource support.'
-      ))
-    }
-
     var tagName = MEDIASOURCE_VIDEO_EXTS.indexOf(extname) >= 0 ? 'video' : 'audio'
 
-    if (VIDEOSTREAM_EXTS.indexOf(extname) >= 0) useVideostream()
-    else useMediaSource()
+    if (MediaSource) {
+      if (VIDEOSTREAM_EXTS.indexOf(extname) >= 0) {
+        useVideostream()
+      } else {
+        useMediaSource()
+      }
+    } else {
+      useBlobURL()
+    }
 
     function useVideostream () {
       debug('Use `videostream` package for ' + file.name)
@@ -231,12 +230,6 @@ function renderMedia (file, getElem, cb) {
     debug(err.message)
     cb(err)
   }
-}
-
-function nextTick (cb, err, val) {
-  process.nextTick(function () {
-    cb(err, val)
-  })
 }
 
 function getBlobURL (file, cb) {
