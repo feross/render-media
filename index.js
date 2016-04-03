@@ -8,6 +8,7 @@ var MediaElementWrapper = require('mediasource')
 var path = require('path')
 var streamToBlobURL = require('stream-to-blob-url')
 var videostream = require('videostream')
+var WaveSurfer = require('wavesurfer.js')
 
 var VIDEOSTREAM_EXTS = [ '.mp4', '.m4v', '.m4a' ]
 
@@ -52,7 +53,8 @@ function append (file, rootElem, cb) {
   }
 
   renderMedia(file, function (tagName) {
-    if (tagName === 'video' || tagName === 'audio') return createMedia(tagName)
+    if (tagName === 'wave') return createWaveSurfer()
+    else if (tagName === 'video' || tagName === 'audio') return createMedia(tagName)
     else return createElem(tagName)
   }, function (err, elem) {
     if (err && elem) elem.remove()
@@ -66,6 +68,15 @@ function append (file, rootElem, cb) {
     elem.play() // for firefox
     rootElem.appendChild(elem)
     return elem
+  }
+
+  function createWaveSurfer () {
+    return WaveSurfer.create({
+      container: rootElem,
+      backend: 'MediaElement',
+      waveColor: 'violet',
+      progressColor: 'purple'
+    })
   }
 
   function createElem (tagName) {
@@ -84,7 +95,7 @@ function renderMedia (file, getElem, cb) {
   if (MEDIASOURCE_EXTS.indexOf(extname) >= 0) {
     renderMediaSource()
   } else if (AUDIO_EXTS.indexOf(extname) >= 0) {
-    renderAudio()
+    renderWave()
   } else if (IMAGE_EXTS.indexOf(extname) >= 0) {
     renderImage()
   } else if (IFRAME_EXTS.indexOf(extname) >= 0) {
@@ -166,18 +177,29 @@ function renderMedia (file, getElem, cb) {
     }
   }
 
+  function onReady () {
+    elem.params.container.querySelector('audio').controls = true
+    elem.play()
+  }
+
   function onPlaying () {
     elem.removeEventListener('playing', onPlaying)
     cb(null, elem)
   }
 
-  function renderAudio () {
-    elem = getElem('audio')
+  function onWavePlaying () {
+    elem.un('play', onWavePlaying)
+    cb(null, elem)
+  }
+
+  function renderWave () {
+    elem = getElem('wave')
     getBlobURL(file, function (err, url) {
       if (err) return fatalError(err)
-      elem.addEventListener('error', fatalError)
-      elem.addEventListener('playing', onPlaying)
-      elem.src = url
+      elem.on('error', fatalError)
+      elem.on('ready', onReady)
+      elem.on('play', onWavePlaying)
+      elem.load(url)
     })
   }
 
@@ -193,7 +215,6 @@ function renderMedia (file, getElem, cb) {
 
   function renderIframe () {
     elem = getElem('iframe')
-
     getBlobURL(file, function (err, url) {
       if (err) return fatalError(err)
       elem.src = url
