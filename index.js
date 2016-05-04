@@ -62,8 +62,7 @@ function append (file, rootElem, cb) {
   function createMedia (tagName) {
     var elem = createElem(tagName)
     elem.controls = true
-    elem.autoplay = true // for chrome
-    elem.play() // for firefox
+    elem.autoplay = true
     rootElem.appendChild(elem)
     return elem
   }
@@ -110,7 +109,8 @@ function renderMedia (file, getElem, cb) {
       debug('Use `videostream` package for ' + file.name)
       prepareElem()
       elem.addEventListener('error', fallbackToMediaSource)
-      elem.addEventListener('playing', onPlaying)
+      elem.addEventListener('loadstart', onLoadStart)
+      elem.addEventListener('canplay', onCanPlay)
       videostream(file, elem)
     }
 
@@ -118,7 +118,8 @@ function renderMedia (file, getElem, cb) {
       debug('Use MediaSource API for ' + file.name)
       prepareElem()
       elem.addEventListener('error', fallbackToBlobURL)
-      elem.addEventListener('playing', onPlaying)
+      elem.addEventListener('loadstart', onLoadStart)
+      elem.addEventListener('canplay', onCanPlay)
 
       var wrapper = new MediaElementWrapper(elem)
       var writable = wrapper.createWriteStream(getCodec(file.name))
@@ -131,7 +132,8 @@ function renderMedia (file, getElem, cb) {
       debug('Use Blob URL for ' + file.name)
       prepareElem()
       elem.addEventListener('error', fatalError)
-      elem.addEventListener('playing', onPlaying)
+      elem.addEventListener('loadstart', onLoadStart)
+      elem.addEventListener('canplay', onCanPlay)
       getBlobURL(file, function (err, url) {
         if (err) return fatalError(err)
         elem.src = url
@@ -142,7 +144,7 @@ function renderMedia (file, getElem, cb) {
     function fallbackToMediaSource (err) {
       debug('videostream error: fallback to MediaSource API: %o', err.message || err)
       elem.removeEventListener('error', fallbackToMediaSource)
-      elem.removeEventListener('playing', onPlaying)
+      elem.removeEventListener('canplay', onCanPlay)
 
       useMediaSource()
     }
@@ -150,7 +152,7 @@ function renderMedia (file, getElem, cb) {
     function fallbackToBlobURL (err) {
       debug('MediaSource API error: fallback to Blob URL: %o', err.message || err)
       elem.removeEventListener('error', fallbackToBlobURL)
-      elem.removeEventListener('playing', onPlaying)
+      elem.removeEventListener('canplay', onCanPlay)
 
       useBlobURL()
     }
@@ -166,19 +168,25 @@ function renderMedia (file, getElem, cb) {
     }
   }
 
-  function onPlaying () {
-    elem.removeEventListener('playing', onPlaying)
-    cb(null, elem)
-  }
-
   function renderAudio () {
     elem = getElem('audio')
     getBlobURL(file, function (err, url) {
       if (err) return fatalError(err)
       elem.addEventListener('error', fatalError)
-      elem.addEventListener('playing', onPlaying)
+      elem.addEventListener('loadstart', onLoadStart)
+      elem.addEventListener('canplay', onCanPlay)
       elem.src = url
     })
+  }
+
+  function onLoadStart () {
+    elem.removeEventListener('loadstart', onLoadStart)
+    elem.play()
+  }
+
+  function onCanPlay () {
+    elem.removeEventListener('canplay', onCanPlay)
+    cb(null, elem)
   }
 
   function renderImage () {
