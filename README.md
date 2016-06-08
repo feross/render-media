@@ -29,6 +29,7 @@ npm install render-media
 
 ```js
 var render = require('render-media')
+var from = require('from2')
 
 var img = new Buffer('some jpg image data')
 
