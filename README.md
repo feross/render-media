@@ -70,6 +70,11 @@ var file = {
 }
 ```
 
+An optional `file.length` property can also be set to specify the length of the
+file in bytes. This will ensure that `render-media` does not attempt to load large
+files (>100 MB) into memory, which it does in the "blob" strategy. (See discussion
+of strategies below.)
+
 `rootElem` is a container element (CSS selector or reference to DOM node) that the
 content will be shown in. A new DOM node will be created for the content and
 appended to `rootElem`.
@@ -95,8 +100,22 @@ To support video/audio streaming of arbitrary files, WebTorrent uses the
 [`videostream`][videostream] package. If you think there may be a bug in video handling,
 please file an issue on the `videostream` repository.
 
-[videostream]: https://npmjs.com/package/videostream
 
+### rendering strategies
+
+For video and audio, `render-media` tries multiple methods of playing the file:
+
+- [`videostream`][videostream] -- best option, supports streaming **with seeking**, but only works with MP4-based files for now
+- [`mediasource`][mediasource] -- supports more formats, supports streaming **without seeking**
+- Blob URL -- supports the most formats of all (anything the `<video>` tag supports from an http url), **does not support streaming** (entire file must be downloaded first), but seeking works
+
+[videostream]: https://www.npmjs.com/package/videostream
+[mediasource]: https://www.npmjs.com/package/mediasource
+
+For other media formats, like images, the file is just added to the DOM.
+
+For text-based formats, like html files, pdfs, etc., the file is added to the DOM
+via a sandboxed `<iframe>` tag.
 
 ### license
 
