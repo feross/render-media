@@ -13,7 +13,7 @@ var VIDEOSTREAM_EXTS = [ '.mp4', '.m4v', '.m4a' ]
 
 var MEDIASOURCE_VIDEO_EXTS = [ '.mp4', '.m4v', '.webm', '.mkv' ]
 var MEDIASOURCE_AUDIO_EXTS = [ '.m4a', '.mp3' ]
-var MEDIASOURCE_EXTS = MEDIASOURCE_VIDEO_EXTS.concat(MEDIASOURCE_AUDIO_EXTS)
+var MEDIASOURCE_EXTS = [].concat(MEDIASOURCE_VIDEO_EXTS, MEDIASOURCE_AUDIO_EXTS)
 
 var AUDIO_EXTS = [ '.wav', '.aac', '.ogg', '.oga' ]
 var IMAGE_EXTS = [ '.jpg', '.jpeg', '.png', '.gif', '.bmp' ]
