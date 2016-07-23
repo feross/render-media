@@ -9,15 +9,53 @@ var path = require('path')
 var streamToBlobURL = require('stream-to-blob-url')
 var videostream = require('videostream')
 
-var VIDEOSTREAM_EXTS = [ '.mp4', '.m4v', '.m4a' ]
+var VIDEOSTREAM_EXTS = [
+  '.m4a',
+  '.m4v',
+  '.mp4'
+]
 
-var MEDIASOURCE_VIDEO_EXTS = [ '.mp4', '.m4v', '.webm', '.mkv' ]
-var MEDIASOURCE_AUDIO_EXTS = [ '.m4a', '.mp3' ]
-var MEDIASOURCE_EXTS = [].concat(MEDIASOURCE_VIDEO_EXTS, MEDIASOURCE_AUDIO_EXTS)
+var MEDIASOURCE_VIDEO_EXTS = [
+  '.m4v',
+  '.mkv',
+  '.mp4',
+  '.webm'
+]
 
-var AUDIO_EXTS = [ '.wav', '.aac', '.ogg', '.oga' ]
-var IMAGE_EXTS = [ '.jpg', '.jpeg', '.png', '.gif', '.bmp' ]
-var IFRAME_EXTS = [ '.css', '.html', '.js', '.md', '.pdf', '.txt' ]
+var MEDIASOURCE_AUDIO_EXTS = [
+  '.m4a',
+  '.mp3'
+]
+
+var MEDIASOURCE_EXTS = [].concat(
+  MEDIASOURCE_VIDEO_EXTS,
+  MEDIASOURCE_AUDIO_EXTS
+)
+
+var AUDIO_EXTS = [
+  '.aac',
+  '.oga',
+  '.ogg',
+  '.wav'
+]
+
+var IMAGE_EXTS = [
+  '.bmp',
+  '.gif',
+  '.jpeg',
+  '.jpg',
+  '.png'
+]
+
+var IFRAME_EXTS = [
+  '.css',
+  '.html',
+  '.js',
+  '.md',
+  '.pdf',
+  '.txt'
+]
+
 // Maximum file length for which the Blob URL strategy will be attempted
 // See: https://github.com/feross/render-media/issues/18
 var MAX_BLOB_LENGTH = 100 * 1000 * 1000 // 100 MB
