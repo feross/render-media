@@ -1,6 +1,6 @@
 exports.render = render
 exports.append = append
-var mime = exports.mime = require('./lib/mime.json')
+exports.mime = require('./lib/mime.json')
 
 var debug = require('debug')('render-media')
 var isAscii = require('is-ascii')
@@ -242,7 +242,7 @@ function renderMedia (file, getElem, cb) {
 
 function getBlobURL (file, cb) {
   var extname = path.extname(file.name).toLowerCase()
-  streamToBlobURL(file.createReadStream(), mime[extname], cb)
+  streamToBlobURL(file.createReadStream(), exports.mime[extname], cb)
 }
 
 function validateFile (file) {
