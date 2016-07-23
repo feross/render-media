@@ -18,6 +18,9 @@ var MEDIASOURCE_EXTS = [].concat(MEDIASOURCE_VIDEO_EXTS, MEDIASOURCE_AUDIO_EXTS)
 var AUDIO_EXTS = [ '.wav', '.aac', '.ogg', '.oga' ]
 var IMAGE_EXTS = [ '.jpg', '.jpeg', '.png', '.gif', '.bmp' ]
 var IFRAME_EXTS = [ '.css', '.html', '.js', '.md', '.pdf', '.txt' ]
+// Maximum file length for which the Blob URL strategy will be attempted
+// See: https://github.com/feross/render-media/issues/18
+var MAX_BLOB_LENGTH = 100 * 1000 * 1000 // 100 MB
 
 var MediaSource = typeof window !== 'undefined' && window.MediaSource
 
@@ -151,6 +154,15 @@ function renderMedia (file, getElem, cb) {
 
     function fallbackToBlobURL (err) {
       debug('MediaSource API error: fallback to Blob URL: %o', err.message || err)
+
+      if (typeof file.length === 'number' && file.length > MAX_BLOB_LENGTH) {
+        debug(
+          'File length too large for Blob URL approach: %d (max: %d)',
+          file.length, MAX_BLOB_LENGTH
+        )
+        return fatalError(err)
+      }
+
       elem.removeEventListener('error', fallbackToBlobURL)
       elem.removeEventListener('canplay', onCanPlay)
 
