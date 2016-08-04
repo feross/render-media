@@ -72,7 +72,7 @@ var file = {
 
 An optional `file.length` property can also be set to specify the length of the
 file in bytes. This will ensure that `render-media` does not attempt to load large
-files (>100 MB) into memory, which it does in the "blob" strategy. (See discussion
+files (>200 MB) into memory, which it does in the "blob" strategy. (See discussion
 of strategies below.)
 
 `rootElem` is a container element (CSS selector or reference to DOM node) that the

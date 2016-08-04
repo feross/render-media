@@ -58,7 +58,7 @@ var IFRAME_EXTS = [
 
 // Maximum file length for which the Blob URL strategy will be attempted
 // See: https://github.com/feross/render-media/issues/18
-var MAX_BLOB_LENGTH = 100 * 1000 * 1000 // 100 MB
+var MAX_BLOB_LENGTH = 200 * 1000 * 1000 // 200 MB
 
 var MediaSource = typeof window !== 'undefined' && window.MediaSource
 
