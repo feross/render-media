@@ -218,7 +218,10 @@ function renderMedia (file, getElem, opts, cb) {
           'File length too large for Blob URL approach: %d (max: %d)',
           file.length, MAX_BLOB_LENGTH
         )
-        return fatalError(err)
+        return fatalError(new Error(
+          'File length too large for Blob URL approach: ' + file.length +
+          ' (max: ' + MAX_BLOB_LENGTH + ')'
+        ))
       }
 
       elem.removeEventListener('error', fallbackToBlobURL)
