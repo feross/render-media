@@ -50,7 +50,7 @@ render.append(file, 'body', function (err, elem) {
 
 ### api
 
-#### `render.append(file, rootElem, [function callback (err, elem) {}])`
+#### `render.append(file, rootElem, [opts], [function callback (err, elem) {}])`
 
 `file` is an object with a `name` (string, with file extension) and `createReadStream`
 method which provides the file data.
@@ -79,8 +79,14 @@ of strategies below.)
 content will be shown in. A new DOM node will be created for the content and
 appended to `rootElem`.
 
-`callback` will be called once the file is visible to the user. `callback` is called
-with an `Error` (or `null`) and the new DOM node that is displaying the content.
+If provided, `opts` can contain the following options:
+
+- `autoplay`: Autoplay video/audio files (default: `true`)
+- `controls`: Show video/audio player controls (default: `true`)
+
+If provided, `callback` will be called once the file is visible to the user.
+`callback` is called with an `Error` (or `null`) and the new DOM node that is
+displaying the content.
 
 #### `render.render(file, elem, [function callback (err, elem) {}])`
 

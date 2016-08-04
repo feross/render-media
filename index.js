@@ -62,8 +62,17 @@ var MAX_BLOB_LENGTH = 100 * 1000 * 1000 // 100 MB
 
 var MediaSource = typeof window !== 'undefined' && window.MediaSource
 
-function render (file, elem, cb) {
+function render (file, elem, opts, cb) {
+  if (typeof opts === 'function') {
+    cb = opts
+    opts = {}
+  }
+  if (!opts) opts = {}
+  if (!cb) cb = function () {}
+
   validateFile(file)
+  parseOpts(opts)
+
   if (typeof elem === 'string') elem = document.querySelector(elem)
 
   renderMedia(file, function (tagName) {
@@ -77,12 +86,20 @@ function render (file, elem, cb) {
     }
 
     return elem
-  }, cb)
+  }, opts, cb)
 }
 
-function append (file, rootElem, cb) {
+function append (file, rootElem, opts, cb) {
+  if (typeof opts === 'function') {
+    cb = opts
+    opts = {}
+  }
+  if (!opts) opts = {}
   if (!cb) cb = function () {}
+
   validateFile(file)
+  parseOpts(opts)
+
   if (typeof rootElem === 'string') rootElem = document.querySelector(rootElem)
 
   if (rootElem && (rootElem.nodeName === 'VIDEO' || rootElem.nodeName === 'AUDIO')) {
@@ -92,18 +109,17 @@ function append (file, rootElem, cb) {
     )
   }
 
-  renderMedia(file, function (tagName) {
+  renderMedia(file, getElem, opts, done)
+
+  function getElem (tagName) {
     if (tagName === 'video' || tagName === 'audio') return createMedia(tagName)
     else return createElem(tagName)
-  }, function (err, elem) {
-    if (err && elem) elem.remove()
-    cb(err, elem)
-  })
+  }
 
   function createMedia (tagName) {
     var elem = createElem(tagName)
-    elem.controls = true
-    elem.autoplay = true
+    if (opts.controls) elem.controls = true
+    if (opts.autoplay) elem.autoplay = true
     rootElem.appendChild(elem)
     return elem
   }
@@ -113,10 +129,14 @@ function append (file, rootElem, cb) {
     rootElem.appendChild(elem)
     return elem
   }
+
+  function done (err, elem) {
+    if (err && elem) elem.remove()
+    cb(err, elem)
+  }
 }
 
-function renderMedia (file, getElem, cb) {
-  if (!cb) cb = function () {}
+function renderMedia (file, getElem, opts, cb) {
   var extname = path.extname(file.name).toLowerCase()
   var currentTime = 0
   var elem
@@ -231,7 +251,7 @@ function renderMedia (file, getElem, cb) {
 
   function onLoadStart () {
     elem.removeEventListener('loadstart', onLoadStart)
-    elem.play()
+    if (opts.autoplay) elem.play()
   }
 
   function onCanPlay () {
@@ -317,4 +337,9 @@ function getCodec (name) {
     '.mp4': 'video/mp4; codecs="avc1.640029, mp4a.40.5"',
     '.webm': 'video/webm; codecs="vorbis, vp8"'
   }[extname]
+}
+
+function parseOpts (opts) {
+  if (opts.autoplay == null) opts.autoplay = true
+  if (opts.controls == null) opts.controls = true
 }
