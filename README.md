@@ -97,16 +97,10 @@ Like `render.append` but renders directly into given element (or CSS selector).
 ### why does video/audio streaming not work on file X?
 
 Streaming support depends on support for `MediaSource` API in the browser. All
-modern browsers have `MediaSource` support. In Firefox, support was added in
-Firefox 42 (i.e. Firefox Nightly).
+modern browsers have `MediaSource` support.
 
 Many file types are supported (again, depending on browser support), but only `.mp4`,
 `.m4v`, and `.m4a` have full support, including seeking.
-
-To support video/audio streaming of arbitrary files, WebTorrent uses the
-[`videostream`][videostream] package. If you think there may be a bug in video handling,
-please file an issue on the `videostream` repository.
-
 
 ### rendering strategies
 
@@ -123,7 +117,7 @@ The Blob URL strategy will not be attempted if the file is over
 `opts.maxBlobLength` (200 MB by default) since it requires the entire file to be
 downloaded before playback can start which gives the appearance of the `<video>`
 tag being stalled. If you increase the size, be sure to indicate loading progress
-to the user.
+to the user in the UI somehow.
 
 For other media formats, like images, the file is just added to the DOM.
 
