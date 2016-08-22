@@ -106,9 +106,13 @@ Many file types are supported (again, depending on browser support), but only `.
 
 For video and audio, `render-media` tries multiple methods of playing the file:
 
-- [`videostream`][videostream] -- best option, supports streaming **with seeking**, but only works with MP4-based files for now
-- [`mediasource`][mediasource] -- supports more formats, supports streaming **without seeking**
-- Blob URL -- supports the most formats of all (anything the `<video>` tag supports from an http url), **does not support streaming** (entire file must be downloaded first), but seeking works
+- [`videostream`][videostream] -- best option, supports streaming **with seeking**,
+  but only works with MP4-based files for now (uses `MediaSource` API)
+- [`mediasource`][mediasource] -- supports more formats, supports streaming
+  **without seeking** (uses `MediaSource` API)
+- Blob URL -- supports the most formats of all (anything the `<video>` tag supports
+  from an http url), **with seeking**, but **does not support streaming** (entire
+  file must be downloaded first)
 
 [videostream]: https://www.npmjs.com/package/videostream
 [mediasource]: https://www.npmjs.com/package/mediasource
