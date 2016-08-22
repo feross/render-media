@@ -72,7 +72,7 @@ var file = {
 
 An optional `file.length` property can also be set to specify the length of the
 file in bytes. This will ensure that `render-media` does not attempt to load large
-files (>200 MB) into memory, which it does in the "blob" strategy. (See discussion
+files (>200 MB by default) into memory, which it does in the "blob" strategy. (See discussion
 of strategies below.)
 
 `rootElem` is a container element (CSS selector or reference to DOM node) that the
@@ -83,6 +83,7 @@ If provided, `opts` can contain the following options:
 
 - `autoplay`: Autoplay video/audio files (default: `true`)
 - `controls`: Show video/audio player controls (default: `true`)
+- `maxBlobLength`: Files above this size will skip the "blob" strategy and fail (default: `200 * 1000 * 1000` bytes)
 
 If provided, `callback` will be called once the file is visible to the user.
 `callback` is called with an `Error` (or `null`) and the new DOM node that is
@@ -117,6 +118,12 @@ For video and audio, `render-media` tries multiple methods of playing the file:
 
 [videostream]: https://www.npmjs.com/package/videostream
 [mediasource]: https://www.npmjs.com/package/mediasource
+
+The Blob URL strategy will not be attempted if the file is over
+`opts.maxBlobLength` (200 MB by default) since it requires the entire file to be
+downloaded before playback can start which gives the appearance of the `<video>`
+tag being stalled. If you increase the size, be sure to indicate loading progress
+to the user.
 
 For other media formats, like images, the file is just added to the DOM.
 

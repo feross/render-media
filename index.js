@@ -213,14 +213,14 @@ function renderMedia (file, getElem, opts, cb) {
     function fallbackToBlobURL (err) {
       debug('MediaSource API error: fallback to Blob URL: %o', err.message || err)
 
-      if (typeof file.length === 'number' && file.length > MAX_BLOB_LENGTH) {
+      if (typeof file.length === 'number' && file.length > opts.maxBlobLength) {
         debug(
           'File length too large for Blob URL approach: %d (max: %d)',
-          file.length, MAX_BLOB_LENGTH
+          file.length, opts.maxBlobLength
         )
         return fatalError(new Error(
           'File length too large for Blob URL approach: ' + file.length +
-          ' (max: ' + MAX_BLOB_LENGTH + ')'
+          ' (max: ' + opts.maxBlobLength + ')'
         ))
       }
 
@@ -345,4 +345,5 @@ function getCodec (name) {
 function parseOpts (opts) {
   if (opts.autoplay == null) opts.autoplay = true
   if (opts.controls == null) opts.controls = true
+  if (opts.maxBlobLength == null) opts.maxBlobLength = MAX_BLOB_LENGTH
 }
