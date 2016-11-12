@@ -9,7 +9,7 @@
   ".bz2": "application/x-bzip2",
   ".conf": "text/plain",
   ".css": "text/css",
-  ".csv": "text/csv",
+  ".csv": "text/plain",
   ".diff": "text/x-diff",
   ".doc": "application/msword",
   ".flv": "video/x-flv",
