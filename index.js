@@ -44,7 +44,8 @@ var IMAGE_EXTS = [
   '.gif',
   '.jpeg',
   '.jpg',
-  '.png'
+  '.png',
+  '.svg'
 ]
 
 var IFRAME_EXTS = [
