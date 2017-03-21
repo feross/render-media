@@ -1,4 +1,13 @@
-# render-media [![Build Status][travis-image]][travis-url] [![NPM Version][npm-image]][npm-url] [![NPM Downloads][downloads-image]][downloads-url]
+# render-media [![travis][travis-image]][travis-url] [![npm][npm-image]][npm-url] [![downloads][downloads-image]][downloads-url] [![javascript style guide][standard-image]][standard-url]
+
+[travis-image]: https://img.shields.io/travis/feross/render-media/master.svg
+[travis-url]: https://travis-ci.org/feross/render-media
+[npm-image]: https://img.shields.io/npm/v/render-media.svg
+[npm-url]: https://npmjs.org/package/render-media
+[downloads-image]: https://img.shields.io/npm/dm/render-media.svg
+[downloads-url]: https://npmjs.org/package/render-media
+[standard-image]: https://img.shields.io/badge/code_style-standard-brightgreen.svg
+[standard-url]: https://standardjs.com
 
 #### Intelligently render media files in the browser
 
