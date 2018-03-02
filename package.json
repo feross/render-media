@@ -18,12 +18,12 @@
     "videostream": "^2.3.0"
   },
   "devDependencies": {
+    "airtap": "0.0.4",
     "brfs": "^1.4.1",
     "from2": "^2.1.0",
     "standard": "*",
     "string-to-stream": "^1.0.1",
-    "tape": "^4.0.0",
-    "zuul": "^3.0.0"
+    "tape": "^4.0.0"
   },
   "homepage": "https://github.com/feross/render-media",
   "keywords": [
@@ -41,7 +41,7 @@
   },
   "scripts": {
     "test": "standard && npm run test-browser",
-    "test-browser": "zuul -- test/*.js",
-    "test-browser-local": "zuul --local -- test/*.js"
+    "test-browser": "airtap -- test/*.js",
+    "test-browser-local": "airtap --local -- test/*.js"
   }
 }
