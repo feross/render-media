@@ -36,7 +36,8 @@ var AUDIO_EXTS = [
   '.aac',
   '.oga',
   '.ogg',
-  '.wav'
+  '.wav',
+  '.flac'
 ]
 
 var IMAGE_EXTS = [
