@@ -273,21 +273,20 @@ function renderMedia (file, getElem, opts, cb) {
       cb(null, elem)
     })
   }
-  
-   function renderIframe () {
+
+  function renderIframe () {
     getBlobURL(file, function (err, url) {
       if (err) return fatalError(err)
-      else if(extname !== '.pdf') {
+      else if (extname !== '.pdf') {
         // Render iframe
         elem = getElem('iframe')
         elem.sandbox = 'allow-forms allow-scripts'
         elem.src = url
-      }
-      else {
+      } else {
         // Render .pdf
         elem = getElem('object')
         elem.setAttribute('type', 'application/pdf')
-        elem.setAttribute('data', url);
+        elem.setAttribute('data', url)
       }
       cb(null, elem)
     })
