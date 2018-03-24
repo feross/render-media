@@ -273,14 +273,22 @@ function renderMedia (file, getElem, opts, cb) {
       cb(null, elem)
     })
   }
-
-  function renderIframe () {
-    elem = getElem('iframe')
-
+  
+   function renderIframe () {
     getBlobURL(file, function (err, url) {
       if (err) return fatalError(err)
-      elem.src = url
-      if (extname !== '.pdf') elem.sandbox = 'allow-forms allow-scripts'
+      else if(extname !== '.pdf') {
+        // Render iframe
+        elem = getElem('iframe')
+        elem.sandbox = 'allow-forms allow-scripts'
+        elem.src = url
+      }
+      else {
+        // Render .pdf
+        elem = getElem('object')
+        elem.setAttribute('type', 'application/pdf')
+        elem.setAttribute('data', url);
+      }
       cb(null, elem)
     })
   }
