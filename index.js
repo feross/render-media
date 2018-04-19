@@ -120,8 +120,9 @@ function append (file, rootElem, opts, cb) {
 
   function createMedia (tagName) {
     var elem = createElem(tagName)
-    if (opts.controls) elem.controls = true
     if (opts.autoplay) elem.autoplay = true
+    if (opts.muted) elem.muted = true
+    if (opts.controls) elem.controls = true
     rootElem.appendChild(elem)
     return elem
   }
@@ -346,6 +347,7 @@ function getCodec (name) {
 
 function parseOpts (opts) {
   if (opts.autoplay == null) opts.autoplay = false
+  if (opts.muted == null) opts.muted = false
   if (opts.controls == null) opts.controls = true
   if (opts.maxBlobLength == null) opts.maxBlobLength = MAX_BLOB_LENGTH
 }

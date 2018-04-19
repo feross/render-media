@@ -91,8 +91,14 @@ appended to `rootElem`.
 If provided, `opts` can contain the following options:
 
 - `autoplay`: Autoplay video/audio files (default: `true`)
+- `muted`: Mute video/audio files (default: `false`)
 - `controls`: Show video/audio player controls (default: `true`)
 - `maxBlobLength`: Files above this size will skip the "blob" strategy and fail (default: `200 * 1000 * 1000` bytes)
+
+Note: Modern browsers tend to block media that autoplays with audio (here's the
+[Chrome policy](https://developers.google.com/web/updates/2017/09/autoplay-policy-changes)
+for instance) so if you set `autoplay` to `true`, it's a good idea to also set
+`muted` to `true`.
 
 If provided, `callback` will be called once the file is visible to the user.
 `callback` is called with an `Error` (or `null`) and the new DOM node that is
