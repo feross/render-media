@@ -345,7 +345,7 @@ function getCodec (name) {
 }
 
 function parseOpts (opts) {
-  if (opts.autoplay == null) opts.autoplay = true
+  if (opts.autoplay == null) opts.autoplay = false
   if (opts.controls == null) opts.controls = true
   if (opts.maxBlobLength == null) opts.maxBlobLength = MAX_BLOB_LENGTH
 }
