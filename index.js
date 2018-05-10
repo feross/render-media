@@ -278,7 +278,8 @@ function renderMedia (file, getElem, opts, cb) {
   function renderIframe () {
     getBlobURL(file, function (err, url) {
       if (err) return fatalError(err)
-      else if (extname !== '.pdf') {
+
+      if (extname !== '.pdf') {
         // Render iframe
         elem = getElem('iframe')
         elem.sandbox = 'allow-forms allow-scripts'
@@ -286,6 +287,9 @@ function renderMedia (file, getElem, opts, cb) {
       } else {
         // Render .pdf
         elem = getElem('object')
+        // Firefox-only: `typemustmatch` keeps the embedded file from running unless
+        // its content type matches the specified `type` attribute
+        elem.setAttribute('typemustmatch', true)
         elem.setAttribute('type', 'application/pdf')
         elem.setAttribute('data', url)
       }
