@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "airtap": "0.0.7",
-    "brfs": "^1.4.1",
+    "brfs": "^2.0.0",
     "from2": "^2.1.0",
     "standard": "*",
     "string-to-stream": "^1.0.1",
