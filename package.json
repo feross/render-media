@@ -1,7 +1,7 @@
 {
   "name": "render-media",
   "description": "Intelligently render media files in the browser",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "author": {
     "name": "Feross Aboukhadijeh",
     "email": "feross@feross.org",
@@ -18,7 +18,7 @@
     "videostream": "^2.3.0"
   },
   "devDependencies": {
-    "airtap": "0.0.7",
+    "airtap": "0.1.0",
     "brfs": "^2.0.0",
     "from2": "^2.1.0",
     "standard": "*",

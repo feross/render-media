@@ -90,7 +90,7 @@ appended to `rootElem`.
 
 If provided, `opts` can contain the following options:
 
-- `autoplay`: Autoplay video/audio files (default: `true`)
+- `autoplay`: Autoplay video/audio files (default: `false`)
 - `muted`: Mute video/audio files (default: `false`)
 - `controls`: Show video/audio player controls (default: `true`)
 - `maxBlobLength`: Files above this size will skip the "blob" strategy and fail (default: `200 * 1000 * 1000` bytes)
@@ -104,7 +104,7 @@ If provided, `callback` will be called once the file is visible to the user.
 `callback` is called with an `Error` (or `null`) and the new DOM node that is
 displaying the content.
 
-#### `render.render(file, elem, [function callback (err, elem) {}])`
+#### `render.render(file, elem, [opts], [function callback (err, elem) {}])`
 
 Like `render.append` but renders directly into given element (or CSS selector).
 
