@@ -1,38 +1,35 @@
-exports.render = render
-exports.append = append
-exports.mime = require('./lib/mime.json')
+const { extname } = require('path')
+const debug = require('debug')('render-media')
+const isAscii = require('is-ascii')
+const MediaElementWrapper = require('mediasource')
+const streamToBlobURL = require('stream-to-blob-url')
+const videostream = require('videostream')
+const mime = require('./lib/mime.json')
 
-var debug = require('debug')('render-media')
-var isAscii = require('is-ascii')
-var MediaElementWrapper = require('mediasource')
-var path = require('path')
-var streamToBlobURL = require('stream-to-blob-url')
-var videostream = require('videostream')
-
-var VIDEOSTREAM_EXTS = [
+const VIDEOSTREAM_EXTS = [
   '.m4a',
   '.m4v',
   '.mp4'
 ]
 
-var MEDIASOURCE_VIDEO_EXTS = [
+const MEDIASOURCE_VIDEO_EXTS = [
   '.m4v',
   '.mkv',
   '.mp4',
   '.webm'
 ]
 
-var MEDIASOURCE_AUDIO_EXTS = [
+const MEDIASOURCE_AUDIO_EXTS = [
   '.m4a',
   '.mp3'
 ]
 
-var MEDIASOURCE_EXTS = [].concat(
+const MEDIASOURCE_EXTS = [].concat(
   MEDIASOURCE_VIDEO_EXTS,
   MEDIASOURCE_AUDIO_EXTS
 )
 
-var AUDIO_EXTS = [
+const AUDIO_EXTS = [
   '.aac',
   '.oga',
   '.ogg',
@@ -40,7 +37,7 @@ var AUDIO_EXTS = [
   '.flac'
 ]
 
-var IMAGE_EXTS = [
+const IMAGE_EXTS = [
   '.bmp',
   '.gif',
   '.jpeg',
@@ -49,7 +46,7 @@ var IMAGE_EXTS = [
   '.svg'
 ]
 
-var IFRAME_EXTS = [
+const IFRAME_EXTS = [
   '.css',
   '.html',
   '.js',
@@ -60,30 +57,26 @@ var IFRAME_EXTS = [
 
 // Maximum file length for which the Blob URL strategy will be attempted
 // See: https://github.com/feross/render-media/issues/18
-var MAX_BLOB_LENGTH = 200 * 1000 * 1000 // 200 MB
+const MAX_BLOB_LENGTH = 200 * 1000 * 1000 // 200 MB
 
-var MediaSource = typeof window !== 'undefined' && window.MediaSource
+const MediaSource = typeof window !== 'undefined' && window.MediaSource
 
 function render (file, elem, opts, cb) {
-  if (typeof opts === 'function') {
-    cb = opts
-    opts = {}
-  }
+  if (typeof opts === 'function') [cb, opts] = [opts, cb]
+  if (typeof elem === 'string') elem = document.querySelector(elem)
+
   if (!opts) opts = {}
-  if (!cb) cb = function () {}
+  if (!cb) cb = () => {}
 
   validateFile(file)
   parseOpts(opts)
 
-  if (typeof elem === 'string') elem = document.querySelector(elem)
-
-  renderMedia(file, function (tagName) {
+  renderMedia(file, tagName => {
     if (elem.nodeName !== tagName.toUpperCase()) {
-      var extname = path.extname(file.name).toLowerCase()
+      const extname = extname(file.name).toLowerCase()
 
       throw new Error(
-        'Cannot render "' + extname + '" inside a "' +
-        elem.nodeName.toLowerCase() + '" element, expected "' + tagName + '"'
+        `Cannot render "${extname}" inside a "${elem.nodeName.toLowerCase()}" element, expected "${tagName}"`
       )
     }
 
@@ -92,17 +85,14 @@ function render (file, elem, opts, cb) {
 }
 
 function append (file, rootElem, opts, cb) {
-  if (typeof opts === 'function') {
-    cb = opts
-    opts = {}
-  }
+  if (typeof opts === 'function') [cb, opts] = [opts, cb]
+  if (typeof rootElem === 'string') rootElem = document.querySelector(rootElem)
+
   if (!opts) opts = {}
-  if (!cb) cb = function () {}
+  if (!cb) cb = () => {}
 
   validateFile(file)
   parseOpts(opts)
-
-  if (typeof rootElem === 'string') rootElem = document.querySelector(rootElem)
 
   if (rootElem && (rootElem.nodeName === 'VIDEO' || rootElem.nodeName === 'AUDIO')) {
     throw new Error(
@@ -119,7 +109,7 @@ function append (file, rootElem, opts, cb) {
   }
 
   function createMedia (tagName) {
-    var elem = createElem(tagName)
+    const elem = createElem(tagName)
     if (opts.autoplay) elem.autoplay = true
     if (opts.muted) elem.muted = true
     if (opts.controls) elem.controls = true
@@ -128,7 +118,7 @@ function append (file, rootElem, opts, cb) {
   }
 
   function createElem (tagName) {
-    var elem = document.createElement(tagName)
+    const elem = document.createElement(tagName)
     rootElem.appendChild(elem)
     return elem
   }
@@ -140,27 +130,27 @@ function append (file, rootElem, opts, cb) {
 }
 
 function renderMedia (file, getElem, opts, cb) {
-  var extname = path.extname(file.name).toLowerCase()
-  var currentTime = 0
-  var elem
+  const extname = extname(file.name).toLowerCase()
+  let currentTime = 0
+  let elem
 
-  if (MEDIASOURCE_EXTS.indexOf(extname) >= 0) {
+  if (MEDIASOURCE_EXTS.includes(extname)) {
     renderMediaSource()
-  } else if (AUDIO_EXTS.indexOf(extname) >= 0) {
+  } else if (AUDIO_EXTS.includes(extname)) {
     renderAudio()
-  } else if (IMAGE_EXTS.indexOf(extname) >= 0) {
+  } else if (IMAGE_EXTS.includes(extname)) {
     renderImage()
-  } else if (IFRAME_EXTS.indexOf(extname) >= 0) {
+  } else if (IFRAME_EXTS.includes(extname)) {
     renderIframe()
   } else {
     tryRenderIframe()
   }
 
   function renderMediaSource () {
-    var tagName = MEDIASOURCE_VIDEO_EXTS.indexOf(extname) >= 0 ? 'video' : 'audio'
+    const tagName = MEDIASOURCE_VIDEO_EXTS.includes(extname) ? 'video' : 'audio'
 
     if (MediaSource) {
-      if (VIDEOSTREAM_EXTS.indexOf(extname) >= 0) {
+      if (VIDEOSTREAM_EXTS.includes(extname)) {
         useVideostream()
       } else {
         useMediaSource()
@@ -170,7 +160,7 @@ function renderMedia (file, getElem, opts, cb) {
     }
 
     function useVideostream () {
-      debug('Use `videostream` package for ' + file.name)
+      debug(`Use \`videostream\` package for ${file.name}`)
       prepareElem()
       elem.addEventListener('error', fallbackToMediaSource)
       elem.addEventListener('loadstart', onLoadStart)
@@ -179,26 +169,26 @@ function renderMedia (file, getElem, opts, cb) {
     }
 
     function useMediaSource () {
-      debug('Use MediaSource API for ' + file.name)
+      debug(`Use MediaSource API for ${file.name}`)
       prepareElem()
       elem.addEventListener('error', fallbackToBlobURL)
       elem.addEventListener('loadstart', onLoadStart)
       elem.addEventListener('canplay', onCanPlay)
 
-      var wrapper = new MediaElementWrapper(elem)
-      var writable = wrapper.createWriteStream(getCodec(file.name))
+      const wrapper = new MediaElementWrapper(elem)
+      const writable = wrapper.createWriteStream(getCodec(file.name))
       file.createReadStream().pipe(writable)
 
       if (currentTime) elem.currentTime = currentTime
     }
 
     function useBlobURL () {
-      debug('Use Blob URL for ' + file.name)
+      debug(`Use Blob URL for ${file.name}`)
       prepareElem()
       elem.addEventListener('error', fatalError)
       elem.addEventListener('loadstart', onLoadStart)
       elem.addEventListener('canplay', onCanPlay)
-      getBlobURL(file, function (err, url) {
+      getBlobURL(file, (err, url) => {
         if (err) return fatalError(err)
         elem.src = url
         if (currentTime) elem.currentTime = currentTime
@@ -222,8 +212,7 @@ function renderMedia (file, getElem, opts, cb) {
           file.length, opts.maxBlobLength
         )
         return fatalError(new Error(
-          'File length too large for Blob URL approach: ' + file.length +
-          ' (max: ' + opts.maxBlobLength + ')'
+          `File length too large for Blob URL approach: ${file.length} (max: ${opts.maxBlobLength})`
         ))
       }
 
@@ -237,7 +226,7 @@ function renderMedia (file, getElem, opts, cb) {
       if (!elem) {
         elem = getElem(tagName)
 
-        elem.addEventListener('progress', function () {
+        elem.addEventListener('progress', () => {
           currentTime = elem.currentTime
         })
       }
@@ -246,7 +235,7 @@ function renderMedia (file, getElem, opts, cb) {
 
   function renderAudio () {
     elem = getElem('audio')
-    getBlobURL(file, function (err, url) {
+    getBlobURL(file, (err, url) => {
       if (err) return fatalError(err)
       elem.addEventListener('error', fatalError)
       elem.addEventListener('loadstart', onLoadStart)
@@ -267,7 +256,7 @@ function renderMedia (file, getElem, opts, cb) {
 
   function renderImage () {
     elem = getElem('img')
-    getBlobURL(file, function (err, url) {
+    getBlobURL(file, (err, url) => {
       if (err) return fatalError(err)
       elem.src = url
       elem.alt = file.name
@@ -276,7 +265,7 @@ function renderMedia (file, getElem, opts, cb) {
   }
 
   function renderIframe () {
-    getBlobURL(file, function (err, url) {
+    getBlobURL(file, (err, url) => {
       if (err) return fatalError(err)
 
       if (extname !== '.pdf') {
@@ -300,10 +289,10 @@ function renderMedia (file, getElem, opts, cb) {
   function tryRenderIframe () {
     debug('Unknown file extension "%s" - will attempt to render into iframe', extname)
 
-    var str = ''
+    let str = ''
     file.createReadStream({ start: 0, end: 1000 })
       .setEncoding('utf8')
-      .on('data', function (chunk) {
+      .on('data', chunk => {
         str += chunk
       })
       .on('end', done)
@@ -315,21 +304,21 @@ function renderMedia (file, getElem, opts, cb) {
         renderIframe()
       } else {
         debug('File extension "%s" appears non-ascii, will not render.', extname)
-        cb(new Error('Unsupported file type "' + extname + '": Cannot append to DOM'))
+        cb(new Error(`Unsupported file type "${extname}": Cannot append to DOM`))
       }
     }
   }
 
   function fatalError (err) {
-    err.message = 'Error rendering file "' + file.name + '": ' + err.message
+    err.message = `Error rendering file "${file.name}": ${err.message}`
     debug(err.message)
     cb(err)
   }
 }
 
 function getBlobURL (file, cb) {
-  var extname = path.extname(file.name).toLowerCase()
-  streamToBlobURL(file.createReadStream(), exports.mime[extname], cb)
+  const extname = extname(file.name).toLowerCase()
+  streamToBlobURL(file.createReadStream(), mime[extname], cb)
 }
 
 function validateFile (file) {
@@ -345,7 +334,7 @@ function validateFile (file) {
 }
 
 function getCodec (name) {
-  var extname = path.extname(name).toLowerCase()
+  const extname = extname(name).toLowerCase()
   return {
     '.m4a': 'audio/mp4; codecs="mp4a.40.5"',
     '.m4v': 'video/mp4; codecs="avc1.640029, mp4a.40.5"',
@@ -362,3 +351,7 @@ function parseOpts (opts) {
   if (opts.controls == null) opts.controls = true
   if (opts.maxBlobLength == null) opts.maxBlobLength = MAX_BLOB_LENGTH
 }
+
+exports.render = render
+exports.append = append
+exports.mime = mime
