@@ -1,7 +1,7 @@
-const { extname } = require('path')
 const debug = require('debug')('render-media')
 const isAscii = require('is-ascii')
 const MediaElementWrapper = require('mediasource')
+const ext = require('path').extname
 const streamToBlobURL = require('stream-to-blob-url')
 const videostream = require('videostream')
 const mime = require('./lib/mime.json')
@@ -73,7 +73,7 @@ function render (file, elem, opts, cb) {
 
   renderMedia(file, tagName => {
     if (elem.nodeName !== tagName.toUpperCase()) {
-      const extname = extname(file.name).toLowerCase()
+      const extname = ext(file.name).toLowerCase()
 
       throw new Error(
         `Cannot render "${extname}" inside a "${elem.nodeName.toLowerCase()}" element, expected "${tagName}"`
@@ -130,7 +130,7 @@ function append (file, rootElem, opts, cb) {
 }
 
 function renderMedia (file, getElem, opts, cb) {
-  const extname = extname(file.name).toLowerCase()
+  const extname = ext(file.name).toLowerCase()
   let currentTime = 0
   let elem
 
@@ -160,7 +160,7 @@ function renderMedia (file, getElem, opts, cb) {
     }
 
     function useVideostream () {
-      debug(`Use \`videostream\` package for ${file.name}`)
+      debug(`Use 'videostream\` package for ${file.name}`)
       prepareElem()
       elem.addEventListener('error', fallbackToMediaSource)
       elem.addEventListener('loadstart', onLoadStart)
@@ -317,7 +317,7 @@ function renderMedia (file, getElem, opts, cb) {
 }
 
 function getBlobURL (file, cb) {
-  const extname = extname(file.name).toLowerCase()
+  const extname = ext(file.name).toLowerCase()
   streamToBlobURL(file.createReadStream(), mime[extname], cb)
 }
 
@@ -334,7 +334,7 @@ function validateFile (file) {
 }
 
 function getCodec (name) {
-  const extname = extname(name).toLowerCase()
+  const extname = ext(name).toLowerCase()
   return {
     '.m4a': 'audio/mp4; codecs="mp4a.40.5"',
     '.m4v': 'video/mp4; codecs="avc1.640029, mp4a.40.5"',
