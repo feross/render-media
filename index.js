@@ -101,8 +101,6 @@ function append (file, rootElem, opts, cb) {
     )
   }
 
-  renderMedia(file, getElem, opts, done)
-
   function getElem (tagName) {
     if (tagName === 'video' || tagName === 'audio') return createMedia(tagName)
     else return createElem(tagName)
@@ -127,6 +125,8 @@ function append (file, rootElem, opts, cb) {
     if (err && elem) elem.remove()
     cb(err, elem)
   }
+
+  renderMedia(file, getElem, opts, done)
 }
 
 function renderMedia (file, getElem, opts, cb) {
