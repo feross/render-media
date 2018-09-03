@@ -159,7 +159,7 @@ function renderMedia (file, getElem, opts, cb) {
     }
 
     function useVideostream () {
-      debug(`Use 'videostream\` package for ${file.name}`)
+      debug('Use `videostream` package for ' + file.name)
       prepareElem()
       elem.addEventListener('error', fallbackToMediaSource)
       elem.addEventListener('loadstart', onLoadStart)
