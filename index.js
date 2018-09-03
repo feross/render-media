@@ -89,7 +89,6 @@ function append (file, rootElem, opts, cb) {
   if (typeof rootElem === 'string') rootElem = document.querySelector(rootElem)
 
   if (!opts) opts = {}
-  if (!cb) cb = () => {}
 
   validateFile(file)
   parseOpts(opts)
@@ -123,7 +122,7 @@ function append (file, rootElem, opts, cb) {
 
   function done (err, elem) {
     if (err && elem) elem.remove()
-    cb(err, elem)
+    if (cb) cb(err, elem)
   }
 
   renderMedia(file, getElem, opts, done)
