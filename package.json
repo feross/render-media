@@ -18,7 +18,7 @@
     "videostream": "^2.5.1"
   },
   "devDependencies": {
-    "airtap": "0.1.0",
+    "airtap": "2.0.2",
     "brfs": "^2.0.0",
     "from2": "^2.1.0",
     "standard": "*",
