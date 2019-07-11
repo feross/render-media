@@ -10,7 +10,7 @@ var file = {
   name: 'cat.jpg',
   createReadStream: function (opts) {
     if (!opts) opts = {}
-    return from([ img.slice(opts.start || 0, opts.end || (img.length - 1)) ])
+    return from([img.slice(opts.start || 0, opts.end || (img.length - 1))])
   }
 }
 
