@@ -9,6 +9,8 @@ var path = require('path')
 var streamToBlobURL = require('stream-to-blob-url')
 var videostream = require('videostream')
 
+// Note: Everything listed in VIDEOSTREAM_EXTS should also appear in either
+// MEDIASOURCE_VIDEO_EXTS or MEDIASOURCE_AUDIO_EXTS.
 var VIDEOSTREAM_EXTS = [
   '.m4a',
   '.m4b',
@@ -35,6 +37,10 @@ var MEDIASOURCE_EXTS = [].concat(
   MEDIASOURCE_VIDEO_EXTS,
   MEDIASOURCE_AUDIO_EXTS
 )
+
+var VIDEO_EXTS = [
+  '.mov'
+]
 
 var AUDIO_EXTS = [
   '.aac',
@@ -150,8 +156,10 @@ function renderMedia (file, getElem, opts, cb) {
 
   if (MEDIASOURCE_EXTS.indexOf(extname) >= 0) {
     renderMediaSource()
+  } else if (VIDEO_EXTS.indexOf(extname) >= 0) {
+    renderMediaElement('video')
   } else if (AUDIO_EXTS.indexOf(extname) >= 0) {
-    renderAudio()
+    renderMediaElement('audio')
   } else if (IMAGE_EXTS.indexOf(extname) >= 0) {
     renderImage()
   } else if (IFRAME_EXTS.indexOf(extname) >= 0) {
@@ -219,17 +227,7 @@ function renderMedia (file, getElem, opts, cb) {
 
     function fallbackToBlobURL (err) {
       debug('MediaSource API error: fallback to Blob URL: %o', err.message || err)
-
-      if (typeof file.length === 'number' && file.length > opts.maxBlobLength) {
-        debug(
-          'File length too large for Blob URL approach: %d (max: %d)',
-          file.length, opts.maxBlobLength
-        )
-        return fatalError(new Error(
-          'File length too large for Blob URL approach: ' + file.length +
-          ' (max: ' + opts.maxBlobLength + ')'
-        ))
-      }
+      if (!checkBlobLength()) return
 
       elem.removeEventListener('error', fallbackToBlobURL)
       elem.removeEventListener('canplay', onCanPlay)
@@ -248,8 +246,25 @@ function renderMedia (file, getElem, opts, cb) {
     }
   }
 
-  function renderAudio () {
-    elem = getElem('audio')
+  function checkBlobLength () {
+    if (typeof file.length === 'number' && file.length > opts.maxBlobLength) {
+      debug(
+        'File length too large for Blob URL approach: %d (max: %d)',
+        file.length, opts.maxBlobLength
+      )
+      fatalError(new Error(
+        'File length too large for Blob URL approach: ' + file.length +
+        ' (max: ' + opts.maxBlobLength + ')'
+      ))
+      return false
+    }
+    return true
+  }
+
+  function renderMediaElement (type) {
+    if (!checkBlobLength()) return
+
+    elem = getElem(type)
     getBlobURL(file, function (err, url) {
       if (err) return fatalError(err)
       elem.addEventListener('error', fatalError)
