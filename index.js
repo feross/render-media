@@ -11,6 +11,8 @@ var videostream = require('videostream')
 
 var VIDEOSTREAM_EXTS = [
   '.m4a',
+  '.m4b',
+  '.m4p',
   '.m4v',
   '.mp4'
 ]
@@ -24,6 +26,8 @@ var MEDIASOURCE_VIDEO_EXTS = [
 
 var MEDIASOURCE_AUDIO_EXTS = [
   '.m4a',
+  '.m4b',
+  '.m4p',
   '.mp3'
 ]
 
@@ -348,6 +352,8 @@ function getCodec (name) {
   var extname = path.extname(name).toLowerCase()
   return {
     '.m4a': 'audio/mp4; codecs="mp4a.40.5"',
+    '.m4b': 'audio/mp4; codecs="mp4a.40.5"',
+    '.m4p': 'audio/mp4; codecs="mp4a.40.5"',
     '.m4v': 'video/mp4; codecs="avc1.640029, mp4a.40.5"',
     '.mkv': 'video/webm; codecs="avc1.640029, mp4a.40.5"',
     '.mp3': 'audio/mpeg',
