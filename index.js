@@ -39,7 +39,8 @@ var MEDIASOURCE_EXTS = [].concat(
 )
 
 var VIDEO_EXTS = [
-  '.mov'
+  '.mov',
+  '.ogv'
 ]
 
 var AUDIO_EXTS = [
