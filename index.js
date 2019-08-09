@@ -349,7 +349,11 @@ function renderMedia (file, getElem, opts, cb) {
 
 function getBlobURL (file, cb) {
   var extname = path.extname(file.name).toLowerCase()
-  streamToBlobURL(file.createReadStream(), exports.mime[extname], cb)
+  streamToBlobURL(file.createReadStream(), exports.mime[extname])
+    .then(
+      blobUrl => cb(null, blobUrl),
+      err => cb(err)
+    )
 }
 
 function validateFile (file) {
