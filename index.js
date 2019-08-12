@@ -169,6 +169,15 @@ function renderMedia (file, getElem, opts, cb) {
     tryRenderIframe()
   }
 
+  function addListener (elem, event, listener) {
+    elem.addEventListener(event, listener)
+    opts.onAddListener(elem, event, listener)
+  }
+  function removeListener (elem, event, listener) {
+    elem.removeEventListener(event, listener)
+    opts.onRemoveListener(elem, event, listener)
+  }
+
   function renderMediaSource () {
     var tagName = MEDIASOURCE_VIDEO_EXTS.indexOf(extname) >= 0 ? 'video' : 'audio'
 
@@ -185,18 +194,18 @@ function renderMedia (file, getElem, opts, cb) {
     function useVideostream () {
       debug('Use `videostream` package for ' + file.name)
       prepareElem()
-      elem.addEventListener('error', fallbackToMediaSource)
-      elem.addEventListener('loadstart', onLoadStart)
-      elem.addEventListener('canplay', onCanPlay)
+      addListener(elem, 'error', fallbackToMediaSource)
+      addListener(elem, 'loadstart', onLoadStart)
+      addListener(elem, 'canplay', onCanPlay)
       videostream(file, elem)
     }
 
     function useMediaSource () {
       debug('Use MediaSource API for ' + file.name)
       prepareElem()
-      elem.addEventListener('error', fallbackToBlobURL)
-      elem.addEventListener('loadstart', onLoadStart)
-      elem.addEventListener('canplay', onCanPlay)
+      addListener(elem, 'error', fallbackToBlobURL)
+      addListener(elem, 'loadstart', onLoadStart)
+      addListener(elem, 'canplay', onCanPlay)
 
       var wrapper = new MediaElementWrapper(elem)
       var writable = wrapper.createWriteStream(getCodec(file.name))
@@ -208,9 +217,9 @@ function renderMedia (file, getElem, opts, cb) {
     function useBlobURL () {
       debug('Use Blob URL for ' + file.name)
       prepareElem()
-      elem.addEventListener('error', fatalError)
-      elem.addEventListener('loadstart', onLoadStart)
-      elem.addEventListener('canplay', onCanPlay)
+      addListener(elem, 'error', fatalError)
+      addListener(elem, 'loadstart', onLoadStart)
+      addListener(elem, 'canplay', onCanPlay)
       getBlobURL(file, function (err, url) {
         if (err) return fatalError(err)
         elem.src = url
@@ -220,8 +229,8 @@ function renderMedia (file, getElem, opts, cb) {
 
     function fallbackToMediaSource (err) {
       debug('videostream error: fallback to MediaSource API: %o', err.message || err)
-      elem.removeEventListener('error', fallbackToMediaSource)
-      elem.removeEventListener('canplay', onCanPlay)
+      removeListener(elem, 'error', fallbackToMediaSource)
+      removeListener(elem, 'canplay', onCanPlay)
 
       useMediaSource()
     }
@@ -230,8 +239,8 @@ function renderMedia (file, getElem, opts, cb) {
       debug('MediaSource API error: fallback to Blob URL: %o', err.message || err)
       if (!checkBlobLength()) return
 
-      elem.removeEventListener('error', fallbackToBlobURL)
-      elem.removeEventListener('canplay', onCanPlay)
+      removeListener(elem, 'error', fallbackToBlobURL)
+      removeListener(elem, 'canplay', onCanPlay)
 
       useBlobURL()
     }
@@ -240,7 +249,7 @@ function renderMedia (file, getElem, opts, cb) {
       if (!elem) {
         elem = getElem(tagName)
 
-        elem.addEventListener('progress', function () {
+        addListener(elem, 'progress', function () {
           currentTime = elem.currentTime
         })
       }
@@ -268,20 +277,20 @@ function renderMedia (file, getElem, opts, cb) {
     elem = getElem(type)
     getBlobURL(file, function (err, url) {
       if (err) return fatalError(err)
-      elem.addEventListener('error', fatalError)
-      elem.addEventListener('loadstart', onLoadStart)
-      elem.addEventListener('canplay', onCanPlay)
+      addListener(elem, 'error', fatalError)
+      addListener(elem, 'loadstart', onLoadStart)
+      addListener(elem, 'canplay', onCanPlay)
       elem.src = url
     })
   }
 
   function onLoadStart () {
-    elem.removeEventListener('loadstart', onLoadStart)
+    removeListener(elem, 'loadstart', onLoadStart)
     if (opts.autoplay) elem.play()
   }
 
   function onCanPlay () {
-    elem.removeEventListener('canplay', onCanPlay)
+    removeListener(elem, 'canplay', onCanPlay)
     cb(null, elem)
   }
 
@@ -387,4 +396,6 @@ function parseOpts (opts) {
   if (opts.muted == null) opts.muted = false
   if (opts.controls == null) opts.controls = true
   if (opts.maxBlobLength == null) opts.maxBlobLength = MAX_BLOB_LENGTH
+  if (opts.onAddListener == null) opts.onAddListener = function () {}
+  if (opts.onRemoveListener == null) opts.onRemoveListener = function () {}
 }
