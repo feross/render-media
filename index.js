@@ -7,7 +7,7 @@ var isAscii = require('is-ascii')
 var MediaElementWrapper = require('mediasource')
 var path = require('path')
 var streamToBlobURL = require('stream-to-blob-url')
-var videostream = require('videostream')
+var Videostream = require('videostream')
 
 // Note: Everything listed in VIDEOSTREAM_EXTS should also appear in either
 // MEDIASOURCE_VIDEO_EXTS or MEDIASOURCE_AUDIO_EXTS.
@@ -88,7 +88,7 @@ function render (file, elem, opts, cb) {
 
   if (typeof elem === 'string') elem = document.querySelector(elem)
 
-  renderMedia(file, function (tagName) {
+  return renderMedia(file, function (tagName) {
     if (elem.nodeName !== tagName.toUpperCase()) {
       var extname = path.extname(file.name).toLowerCase()
 
@@ -156,7 +156,7 @@ function renderMedia (file, getElem, opts, cb) {
   var elem
 
   if (MEDIASOURCE_EXTS.indexOf(extname) >= 0) {
-    renderMediaSource()
+    return renderMediaSource()
   } else if (VIDEO_EXTS.indexOf(extname) >= 0) {
     renderMediaElement('video')
   } else if (AUDIO_EXTS.indexOf(extname) >= 0) {
@@ -183,7 +183,7 @@ function renderMedia (file, getElem, opts, cb) {
 
     if (MediaSource) {
       if (VIDEOSTREAM_EXTS.indexOf(extname) >= 0) {
-        useVideostream()
+        return useVideostream()
       } else {
         useMediaSource()
       }
@@ -197,7 +197,7 @@ function renderMedia (file, getElem, opts, cb) {
       addListener(elem, 'error', fallbackToMediaSource)
       addListener(elem, 'loadstart', onLoadStart)
       addListener(elem, 'canplay', onCanPlay)
-      videostream(file, elem)
+      return new Videostream(file, elem)
     }
 
     function useMediaSource () {
@@ -207,11 +207,15 @@ function renderMedia (file, getElem, opts, cb) {
       addListener(elem, 'loadstart', onLoadStart)
       addListener(elem, 'canplay', onCanPlay)
 
-      var wrapper = new MediaElementWrapper(elem)
-      var writable = wrapper.createWriteStream(getCodec(file.name))
-      file.createReadStream().pipe(writable)
+      try {
+        var wrapper = new MediaElementWrapper(elem)
+        var writable = wrapper.createWriteStream(getCodec(file.name))
+        file.createReadStream().pipe(writable)
 
-      if (currentTime) elem.currentTime = currentTime
+        if (currentTime) elem.currentTime = currentTime
+      } catch (err) {
+        cb(err, elem)
+      }
     }
 
     function useBlobURL () {
@@ -220,11 +224,15 @@ function renderMedia (file, getElem, opts, cb) {
       addListener(elem, 'error', fatalError)
       addListener(elem, 'loadstart', onLoadStart)
       addListener(elem, 'canplay', onCanPlay)
-      getBlobURL(file, function (err, url) {
-        if (err) return fatalError(err)
-        elem.src = url
-        if (currentTime) elem.currentTime = currentTime
-      })
+      try {
+        getBlobURL(file, function (err, url) {
+          if (err) return fatalError(err)
+          elem.src = url
+          if (currentTime) elem.currentTime = currentTime
+        })
+      } catch (err) {
+        cb(err, elem)
+      }
     }
 
     function fallbackToMediaSource (err) {
