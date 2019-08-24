@@ -98,6 +98,8 @@ function render (file, elem, opts, cb) {
       )
     }
 
+    if (tagName === 'video' || tagName === 'audio') setMediaOpts(elem, opts)
+
     return elem
   }, opts, cb)
 }
@@ -131,9 +133,7 @@ function append (file, rootElem, opts, cb) {
 
   function createMedia (tagName) {
     var elem = createElem(tagName)
-    if (opts.autoplay) elem.autoplay = true
-    if (opts.muted) elem.muted = true
-    if (opts.controls) elem.controls = true
+    setMediaOpts(elem, opts)
     rootElem.appendChild(elem)
     return elem
   }
@@ -387,4 +387,10 @@ function parseOpts (opts) {
   if (opts.muted == null) opts.muted = false
   if (opts.controls == null) opts.controls = true
   if (opts.maxBlobLength == null) opts.maxBlobLength = MAX_BLOB_LENGTH
+}
+
+function setMediaOpts (elem, opts) {
+  elem.autoplay = !!opts.autoplay
+  elem.muted = !!opts.muted
+  elem.controls = !!opts.controls
 }
