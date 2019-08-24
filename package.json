@@ -22,7 +22,7 @@
     "brfs": "^2.0.0",
     "from2": "^2.1.0",
     "standard": "*",
-    "string-to-stream": "^2.0.0",
+    "string-to-stream": "^3.0.0",
     "tape": "^4.0.0"
   },
   "homepage": "https://github.com/feross/render-media",
