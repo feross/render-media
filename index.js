@@ -1,3 +1,4 @@
+/*! render-media. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.render = render
 exports.append = append
 exports.mime = require('./lib/mime.json')
