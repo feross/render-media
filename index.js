@@ -67,6 +67,7 @@ var IFRAME_EXTS = [
   '.js',
   '.md',
   '.pdf',
+  '.srt',
   '.txt'
 ]
 
