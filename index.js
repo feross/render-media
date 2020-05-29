@@ -8,7 +8,7 @@ var isAscii = require('is-ascii')
 var MediaElementWrapper = require('mediasource')
 var path = require('path')
 var streamToBlobURL = require('stream-to-blob-url')
-var videostream = require('videostream')
+var VideoStream = require('videostream')
 
 // Note: Everything listed in VIDEOSTREAM_EXTS should also appear in either
 // MEDIASOURCE_VIDEO_EXTS or MEDIASOURCE_AUDIO_EXTS.
@@ -190,7 +190,7 @@ function renderMedia (file, getElem, opts, cb) {
       elem.addEventListener('error', fallbackToMediaSource)
       elem.addEventListener('loadstart', onLoadStart)
       elem.addEventListener('canplay', onCanPlay)
-      videostream(file, elem)
+      new VideoStream(file, elem) /* eslint-disable-line no-new */
     }
 
     function useMediaSource () {
