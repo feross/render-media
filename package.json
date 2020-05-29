@@ -13,17 +13,17 @@
   "dependencies": {
     "debug": "^4.1.1",
     "is-ascii": "^1.0.0",
-    "mediasource": "^2.1.0",
-    "stream-to-blob-url": "^3.0.0",
-    "videostream": "^3.2.0"
+    "mediasource": "^2.3.0",
+    "stream-to-blob-url": "^3.0.2",
+    "videostream": "^3.2.1"
   },
   "devDependencies": {
     "airtap": "^3.0.0",
-    "brfs": "^2.0.0",
-    "from2": "^2.1.0",
+    "brfs": "^2.0.2",
+    "from2": "^2.3.0",
     "standard": "*",
-    "string-to-stream": "^3.0.0",
-    "tape": "^5.0.0"
+    "string-to-stream": "^3.0.1",
+    "tape": "^5.0.1"
   },
   "homepage": "https://github.com/feross/render-media",
   "keywords": [
