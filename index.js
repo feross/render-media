@@ -279,7 +279,10 @@ function renderMedia (file, getElem, opts, cb) {
 
   function onLoadStart () {
     elem.removeEventListener('loadstart', onLoadStart)
-    if (opts.autoplay) elem.play()
+    if (opts.autoplay) {
+      var playPromise = elem.play()
+      if (typeof playPromise !== 'undefined') playPromise.catch(fatalError)
+    }
   }
 
   function onCanPlay () {
