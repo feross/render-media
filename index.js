@@ -83,20 +83,19 @@ function render (file, elem, opts, cb) {
     opts = {}
   }
   if (!opts) opts = {}
-  if (!cb) cb = function () {}
+  if (!cb) cb = () => {}
 
   validateFile(file)
   parseOpts(opts)
 
   if (typeof elem === 'string') elem = document.querySelector(elem)
 
-  renderMedia(file, function (tagName) {
+  renderMedia(file, tagName => {
     if (elem.nodeName !== tagName.toUpperCase()) {
       const extname = path.extname(file.name).toLowerCase()
 
       throw new Error(
-        'Cannot render "' + extname + '" inside a "' +
-        elem.nodeName.toLowerCase() + '" element, expected "' + tagName + '"'
+        `Cannot render "${extname}" inside a "${elem.nodeName.toLowerCase()}" element, expected "${tagName}"`
       )
     }
 
@@ -112,7 +111,7 @@ function append (file, rootElem, opts, cb) {
     opts = {}
   }
   if (!opts) opts = {}
-  if (!cb) cb = function () {}
+  if (!cb) cb = () => {}
 
   validateFile(file)
   parseOpts(opts)
@@ -157,25 +156,25 @@ function renderMedia (file, getElem, opts, cb) {
   let currentTime = 0
   let elem
 
-  if (MEDIASOURCE_EXTS.indexOf(extname) >= 0) {
+  if (MEDIASOURCE_EXTS.includes(extname)) {
     renderMediaSource()
-  } else if (VIDEO_EXTS.indexOf(extname) >= 0) {
+  } else if (VIDEO_EXTS.includes(extname)) {
     renderMediaElement('video')
-  } else if (AUDIO_EXTS.indexOf(extname) >= 0) {
+  } else if (AUDIO_EXTS.includes(extname)) {
     renderMediaElement('audio')
-  } else if (IMAGE_EXTS.indexOf(extname) >= 0) {
+  } else if (IMAGE_EXTS.includes(extname)) {
     renderImage()
-  } else if (IFRAME_EXTS.indexOf(extname) >= 0) {
+  } else if (IFRAME_EXTS.includes(extname)) {
     renderIframe()
   } else {
     tryRenderIframe()
   }
 
   function renderMediaSource () {
-    const tagName = MEDIASOURCE_VIDEO_EXTS.indexOf(extname) >= 0 ? 'video' : 'audio'
+    const tagName = MEDIASOURCE_VIDEO_EXTS.includes(extname) ? 'video' : 'audio'
 
     if (MediaSource) {
-      if (VIDEOSTREAM_EXTS.indexOf(extname) >= 0) {
+      if (VIDEOSTREAM_EXTS.includes(extname)) {
         useVideostream()
       } else {
         useMediaSource()
@@ -185,7 +184,7 @@ function renderMedia (file, getElem, opts, cb) {
     }
 
     function useVideostream () {
-      debug('Use `videostream` package for ' + file.name)
+      debug(`Use \`videostream\` package for ${file.name}`)
       prepareElem()
       elem.addEventListener('error', fallbackToMediaSource)
       elem.addEventListener('loadstart', onLoadStart)
@@ -194,7 +193,7 @@ function renderMedia (file, getElem, opts, cb) {
     }
 
     function useMediaSource () {
-      debug('Use MediaSource API for ' + file.name)
+      debug(`Use MediaSource API for ${file.name}`)
       prepareElem()
       elem.addEventListener('error', fallbackToBlobURL)
       elem.addEventListener('loadstart', onLoadStart)
@@ -208,12 +207,12 @@ function renderMedia (file, getElem, opts, cb) {
     }
 
     function useBlobURL () {
-      debug('Use Blob URL for ' + file.name)
+      debug(`Use Blob URL for ${file.name}`)
       prepareElem()
       elem.addEventListener('error', fatalError)
       elem.addEventListener('loadstart', onLoadStart)
       elem.addEventListener('canplay', onCanPlay)
-      getBlobURL(file, function (err, url) {
+      getBlobURL(file, (err, url) => {
         if (err) return fatalError(err)
         elem.src = url
         if (currentTime) elem.currentTime = currentTime
@@ -242,7 +241,7 @@ function renderMedia (file, getElem, opts, cb) {
       if (!elem) {
         elem = getElem(tagName)
 
-        elem.addEventListener('progress', function () {
+        elem.addEventListener('progress', () => {
           currentTime = elem.currentTime
         })
       }
@@ -256,8 +255,7 @@ function renderMedia (file, getElem, opts, cb) {
         file.length, opts.maxBlobLength
       )
       fatalError(new Error(
-        'File length too large for Blob URL approach: ' + file.length +
-        ' (max: ' + opts.maxBlobLength + ')'
+        `File length too large for Blob URL approach: ${file.length} (max: ${opts.maxBlobLength})`
       ))
       return false
     }
@@ -268,7 +266,7 @@ function renderMedia (file, getElem, opts, cb) {
     if (!checkBlobLength()) return
 
     elem = getElem(type)
-    getBlobURL(file, function (err, url) {
+    getBlobURL(file, (err, url) => {
       if (err) return fatalError(err)
       elem.addEventListener('error', fatalError)
       elem.addEventListener('loadstart', onLoadStart)
@@ -289,7 +287,7 @@ function renderMedia (file, getElem, opts, cb) {
 
   function renderImage () {
     elem = getElem('img')
-    getBlobURL(file, function (err, url) {
+    getBlobURL(file, (err, url) => {
       if (err) return fatalError(err)
       elem.src = url
       elem.alt = file.name
@@ -298,7 +296,7 @@ function renderMedia (file, getElem, opts, cb) {
   }
 
   function renderIframe () {
-    getBlobURL(file, function (err, url) {
+    getBlobURL(file, (err, url) => {
       if (err) return fatalError(err)
 
       if (extname !== '.pdf') {
@@ -325,7 +323,7 @@ function renderMedia (file, getElem, opts, cb) {
     let str = ''
     file.createReadStream({ start: 0, end: 1000 })
       .setEncoding('utf8')
-      .on('data', function (chunk) {
+      .on('data', chunk => {
         str += chunk
       })
       .on('end', done)
@@ -337,13 +335,13 @@ function renderMedia (file, getElem, opts, cb) {
         renderIframe()
       } else {
         debug('File extension "%s" appears non-ascii, will not render.', extname)
-        cb(new Error('Unsupported file type "' + extname + '": Cannot append to DOM'))
+        cb(new Error(`Unsupported file type "${extname}": Cannot append to DOM`))
       }
     }
   }
 
   function fatalError (err) {
-    err.message = 'Error rendering file "' + file.name + '": ' + err.message
+    err.message = `Error rendering file "${file.name}": ${err.message}`
     debug(err.message)
     cb(err)
   }
