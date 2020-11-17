@@ -11,11 +11,11 @@
     "url": "https://github.com/feross/render-media/issues"
   },
   "dependencies": {
-    "debug": "^4.1.1",
+    "debug": "^4.2.0",
     "is-ascii": "^1.0.0",
-    "mediasource": "^2.3.0",
+    "mediasource": "^2.4.0",
     "stream-to-blob-url": "^3.0.2",
-    "videostream": "^3.2.1"
+    "videostream": "^3.2.2"
   },
   "devDependencies": {
     "airtap": "^3.0.0",
