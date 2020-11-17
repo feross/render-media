@@ -1,12 +1,12 @@
-var from = require('from2')
-var fs = require('fs')
-var path = require('path')
-var renderMedia = require('../')
-var test = require('tape')
+const from = require('from2')
+const fs = require('fs')
+const path = require('path')
+const renderMedia = require('../')
+const test = require('tape')
 
-var img = fs.readFileSync(path.join(__dirname, 'cat.jpg'))
+const img = fs.readFileSync(path.join(__dirname, 'cat.jpg'))
 
-var file = {
+const file = {
   name: 'cat.jpg',
   createReadStream: function (opts) {
     if (!opts) opts = {}
@@ -37,7 +37,7 @@ test('image append w/ element', function (t) {
 })
 
 test('image render w/ query selector', function (t) {
-  var img = document.createElement('img')
+  const img = document.createElement('img')
   document.body.appendChild(img)
   renderMedia.render(file, img, function (err, elem) {
     verifyImage(t, err, elem)
@@ -45,7 +45,7 @@ test('image render w/ query selector', function (t) {
 })
 
 test('image render w/ element', function (t) {
-  var img = document.createElement('img')
+  const img = document.createElement('img')
   document.body.appendChild(img)
   renderMedia.render(file, img, function (err, elem) {
     verifyImage(t, err, elem)

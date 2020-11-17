@@ -3,16 +3,16 @@ exports.render = render
 exports.append = append
 exports.mime = require('./lib/mime.json')
 
-var debug = require('debug')('render-media')
-var isAscii = require('is-ascii')
-var MediaElementWrapper = require('mediasource')
-var path = require('path')
-var streamToBlobURL = require('stream-to-blob-url')
-var VideoStream = require('videostream')
+const debug = require('debug')('render-media')
+const isAscii = require('is-ascii')
+const MediaElementWrapper = require('mediasource')
+const path = require('path')
+const streamToBlobURL = require('stream-to-blob-url')
+const VideoStream = require('videostream')
 
 // Note: Everything listed in VIDEOSTREAM_EXTS should also appear in either
 // MEDIASOURCE_VIDEO_EXTS or MEDIASOURCE_AUDIO_EXTS.
-var VIDEOSTREAM_EXTS = [
+const VIDEOSTREAM_EXTS = [
   '.m4a',
   '.m4b',
   '.m4p',
@@ -20,31 +20,31 @@ var VIDEOSTREAM_EXTS = [
   '.mp4'
 ]
 
-var MEDIASOURCE_VIDEO_EXTS = [
+const MEDIASOURCE_VIDEO_EXTS = [
   '.m4v',
   '.mkv',
   '.mp4',
   '.webm'
 ]
 
-var MEDIASOURCE_AUDIO_EXTS = [
+const MEDIASOURCE_AUDIO_EXTS = [
   '.m4a',
   '.m4b',
   '.m4p',
   '.mp3'
 ]
 
-var MEDIASOURCE_EXTS = [].concat(
+const MEDIASOURCE_EXTS = [].concat(
   MEDIASOURCE_VIDEO_EXTS,
   MEDIASOURCE_AUDIO_EXTS
 )
 
-var VIDEO_EXTS = [
+const VIDEO_EXTS = [
   '.mov',
   '.ogv'
 ]
 
-var AUDIO_EXTS = [
+const AUDIO_EXTS = [
   '.aac',
   '.oga',
   '.ogg',
@@ -52,7 +52,7 @@ var AUDIO_EXTS = [
   '.flac'
 ]
 
-var IMAGE_EXTS = [
+const IMAGE_EXTS = [
   '.bmp',
   '.gif',
   '.jpeg',
@@ -61,7 +61,7 @@ var IMAGE_EXTS = [
   '.svg'
 ]
 
-var IFRAME_EXTS = [
+const IFRAME_EXTS = [
   '.css',
   '.html',
   '.js',
@@ -73,9 +73,9 @@ var IFRAME_EXTS = [
 
 // Maximum file length for which the Blob URL strategy will be attempted
 // See: https://github.com/feross/render-media/issues/18
-var MAX_BLOB_LENGTH = 200 * 1000 * 1000 // 200 MB
+const MAX_BLOB_LENGTH = 200 * 1000 * 1000 // 200 MB
 
-var MediaSource = typeof window !== 'undefined' && window.MediaSource
+const MediaSource = typeof window !== 'undefined' && window.MediaSource
 
 function render (file, elem, opts, cb) {
   if (typeof opts === 'function') {
@@ -92,7 +92,7 @@ function render (file, elem, opts, cb) {
 
   renderMedia(file, function (tagName) {
     if (elem.nodeName !== tagName.toUpperCase()) {
-      var extname = path.extname(file.name).toLowerCase()
+      const extname = path.extname(file.name).toLowerCase()
 
       throw new Error(
         'Cannot render "' + extname + '" inside a "' +
@@ -134,14 +134,14 @@ function append (file, rootElem, opts, cb) {
   }
 
   function createMedia (tagName) {
-    var elem = createElem(tagName)
+    const elem = createElem(tagName)
     setMediaOpts(elem, opts)
     rootElem.appendChild(elem)
     return elem
   }
 
   function createElem (tagName) {
-    var elem = document.createElement(tagName)
+    const elem = document.createElement(tagName)
     rootElem.appendChild(elem)
     return elem
   }
@@ -153,9 +153,9 @@ function append (file, rootElem, opts, cb) {
 }
 
 function renderMedia (file, getElem, opts, cb) {
-  var extname = path.extname(file.name).toLowerCase()
-  var currentTime = 0
-  var elem
+  const extname = path.extname(file.name).toLowerCase()
+  let currentTime = 0
+  let elem
 
   if (MEDIASOURCE_EXTS.indexOf(extname) >= 0) {
     renderMediaSource()
@@ -172,7 +172,7 @@ function renderMedia (file, getElem, opts, cb) {
   }
 
   function renderMediaSource () {
-    var tagName = MEDIASOURCE_VIDEO_EXTS.indexOf(extname) >= 0 ? 'video' : 'audio'
+    const tagName = MEDIASOURCE_VIDEO_EXTS.indexOf(extname) >= 0 ? 'video' : 'audio'
 
     if (MediaSource) {
       if (VIDEOSTREAM_EXTS.indexOf(extname) >= 0) {
@@ -200,8 +200,8 @@ function renderMedia (file, getElem, opts, cb) {
       elem.addEventListener('loadstart', onLoadStart)
       elem.addEventListener('canplay', onCanPlay)
 
-      var wrapper = new MediaElementWrapper(elem)
-      var writable = wrapper.createWriteStream(getCodec(file.name))
+      const wrapper = new MediaElementWrapper(elem)
+      const writable = wrapper.createWriteStream(getCodec(file.name))
       file.createReadStream().pipe(writable)
 
       if (currentTime) elem.currentTime = currentTime
@@ -322,7 +322,7 @@ function renderMedia (file, getElem, opts, cb) {
   function tryRenderIframe () {
     debug('Unknown file extension "%s" - will attempt to render into iframe', extname)
 
-    var str = ''
+    let str = ''
     file.createReadStream({ start: 0, end: 1000 })
       .setEncoding('utf8')
       .on('data', function (chunk) {
@@ -350,7 +350,7 @@ function renderMedia (file, getElem, opts, cb) {
 }
 
 function getBlobURL (file, cb) {
-  var extname = path.extname(file.name).toLowerCase()
+  const extname = path.extname(file.name).toLowerCase()
   streamToBlobURL(file.createReadStream(), exports.mime[extname])
     .then(
       blobUrl => cb(null, blobUrl),
@@ -371,7 +371,7 @@ function validateFile (file) {
 }
 
 function getCodec (name) {
-  var extname = path.extname(name).toLowerCase()
+  const extname = path.extname(name).toLowerCase()
   return {
     '.m4a': 'audio/mp4; codecs="mp4a.40.5"',
     '.m4b': 'audio/mp4; codecs="mp4a.40.5"',
