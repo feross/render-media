@@ -188,7 +188,7 @@ function renderMedia (file, getElem, opts, cb) {
       prepareElem()
       elem.addEventListener('error', fallbackToMediaSource)
       elem.addEventListener('loadstart', onLoadStart)
-      elem.addEventListener('canplay', onCanPlay)
+      elem.addEventListener('loadedmetadata', onLoadedMetadata)
       new VideoStream(file, elem) /* eslint-disable-line no-new */
     }
 
@@ -197,7 +197,7 @@ function renderMedia (file, getElem, opts, cb) {
       prepareElem()
       elem.addEventListener('error', fallbackToBlobURL)
       elem.addEventListener('loadstart', onLoadStart)
-      elem.addEventListener('canplay', onCanPlay)
+      elem.addEventListener('loadedmetadata', onLoadedMetadata)
 
       const wrapper = new MediaElementWrapper(elem)
       const writable = wrapper.createWriteStream(getCodec(file.name))
@@ -211,7 +211,7 @@ function renderMedia (file, getElem, opts, cb) {
       prepareElem()
       elem.addEventListener('error', fatalError)
       elem.addEventListener('loadstart', onLoadStart)
-      elem.addEventListener('canplay', onCanPlay)
+      elem.addEventListener('loadedmetadata', onLoadedMetadata)
       getBlobURL(file, (err, url) => {
         if (err) return fatalError(err)
         elem.src = url
@@ -222,7 +222,7 @@ function renderMedia (file, getElem, opts, cb) {
     function fallbackToMediaSource (err) {
       debug('videostream error: fallback to MediaSource API: %o', err.message || err)
       elem.removeEventListener('error', fallbackToMediaSource)
-      elem.removeEventListener('canplay', onCanPlay)
+      elem.removeEventListener('loadedmetadata', onLoadedMetadata)
 
       useMediaSource()
     }
@@ -232,7 +232,7 @@ function renderMedia (file, getElem, opts, cb) {
       if (!checkBlobLength()) return
 
       elem.removeEventListener('error', fallbackToBlobURL)
-      elem.removeEventListener('canplay', onCanPlay)
+      elem.removeEventListener('loadedmetadata', onLoadedMetadata)
 
       useBlobURL()
     }
@@ -270,7 +270,7 @@ function renderMedia (file, getElem, opts, cb) {
       if (err) return fatalError(err)
       elem.addEventListener('error', fatalError)
       elem.addEventListener('loadstart', onLoadStart)
-      elem.addEventListener('canplay', onCanPlay)
+      elem.addEventListener('loadedmetadata', onLoadedMetadata)
       elem.src = url
     })
   }
@@ -278,13 +278,13 @@ function renderMedia (file, getElem, opts, cb) {
   function onLoadStart () {
     elem.removeEventListener('loadstart', onLoadStart)
     if (opts.autoplay) {
-      var playPromise = elem.play()
+      const playPromise = elem.play()
       if (typeof playPromise !== 'undefined') playPromise.catch(fatalError)
     }
   }
 
-  function onCanPlay () {
-    elem.removeEventListener('canplay', onCanPlay)
+  function onLoadedMetadata () {
+    elem.removeEventListener('loadedmetadata', onLoadedMetadata)
     cb(null, elem)
   }
 
