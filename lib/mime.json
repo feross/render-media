@@ -73,6 +73,7 @@
   ".txt": "text/plain",
   ".wav": "audio/wav",
   ".webm": "video/webm",
+  ".webp": "image/webp",
   ".wma": "audio/x-ms-wma",
   ".wmv": "video/x-ms-wmv",
   ".xls": "application/vnd.ms-excel",
