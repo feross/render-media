@@ -58,7 +58,8 @@ const IMAGE_EXTS = [
   '.jpeg',
   '.jpg',
   '.png',
-  '.svg'
+  '.svg',
+  '.webp'
 ]
 
 const IFRAME_EXTS = [
